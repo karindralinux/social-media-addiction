@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Addiction Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'social-blue': '#1877F2',
+                        'social-purple': '#8B5CF6',
+                        'social-pink': '#EC4899',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+        }
+        .predict-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        .predict-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+        .result-card {
+            animation: slideInUp 0.5s ease-out;
+        }
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .risk-low { background: linear-gradient(135deg, #10b981, #059669); }
+        .risk-medium { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .risk-high { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header Section -->
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-12 animate-float">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-6 shadow-lg">
+                <svg class="w-10 h-10 text-social-purple" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            </div>
+            <h1 class="text-5xl font-bold text-white mb-4">Social Media Addiction Predictor</h1>
+            <p class="text-xl text-white/90 max-w-2xl mx-auto">
+                Understand your social media habits with our AI-powered assessment tool.
+                Get personalized insights based on your usage patterns.
+            </p>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loading" class="glass-effect rounded-2xl p-8 mb-8 text-center">
+            <div class="inline-flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-social-purple"></div>
+                <span class="text-lg font-medium text-gray-700">Loading AI model...</span>
+            </div>
+            <p class="text-sm text-gray-500 mt-2">This may take a few seconds as we're preparing your personalized experience</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden glass-effect rounded-2xl p-6 mb-8 border-l-4 border-red-500 bg-red-50">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 text-red-500 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                <div>
+                    <h3 class="text-lg font-medium text-red-800">Oops! Something went wrong</h3>
+                    <p class="text-red-600 mt-1">Please refresh the page and try again.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+            <form id="predictionForm" class="space-y-6">
+                <!-- Personal Information Section -->
+                <div class="border-b border-gray-200 pb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <span class="bg-social-purple text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3">1</span>
+                        Personal Information
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="age" class="block text-sm font-medium text-gray-700 mb-2">
+                                Age <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="age" name="age" min="13" max="100" required
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">
+                                Gender <span class="text-red-500">*</span>
+                            </label>
+                            <select id="gender" name="gender" required
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="academic_level" class="block text-sm font-medium text-gray-700 mb-2">
+                                Academic Level <span class="text-red-500">*</span>
+                            </label>
+                            <select id="academic_level" name="academic_level" required
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                                <option value="">Select Academic Level</option>
+                                <option value="High School">High School</option>
+                                <option value="Undergraduate">Undergraduate</option>
+                                <option value="Graduate">Graduate</option>
+                                <option value="Postgraduate">Postgraduate</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="country" class="block text-sm font-medium text-gray-700 mb-2">
+                                Country <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="country" name="country" required
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Usage Section -->
+                <div class="border-b border-gray-200 pb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <span class="bg-social-blue text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3">2</span>
+                        Social Media Usage
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="avg_daily_usage_hours" class="block text-sm font-medium text-gray-700 mb-2">
+                                Average Daily Usage (hours) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="avg_daily_usage_hours" name="avg_daily_usage_hours" min="0" max="24" step="0.5" required
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label for="most_used_platform" class="block text-sm font-medium text-gray-700 mb-2">
+                                Most Used Platform <span class="text-red-500">*</span>
+                            </label>
+                            <select id="most_used_platform" name="most_used_platform" required
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                                <option value="">Select Platform</option>
+                                <option value="Instagram">📷 Instagram</option>
+                                <option value="Facebook">📘 Facebook</option>
+                                <option value="Twitter">🐦 Twitter</option>
+                                <option value="TikTok">🎵 TikTok</option>
+                                <option value="YouTube">📺 YouTube</option>
+                                <option value="Snapchat">👻 Snapchat</option>
+                                <option value="LinkedIn">💼 LinkedIn</option>
+                                <option value="Other">📱 Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="affects_academic_performance" class="block text-sm font-medium text-gray-700 mb-2">
+                                Affects Academic Performance <span class="text-red-500">*</span>
+                            </label>
+                            <select id="affects_academic_performance" name="affects_academic_performance" required
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                                <option value="">Select Impact</option>
+                                <option value="Yes">📉 Yes</option>
+                                <option value="No">✅ No</option>
+                                <option value="Sometimes">⚠️ Sometimes</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="conflicts_over_social_media" class="block text-sm font-medium text-gray-700 mb-2">
+                                Conflicts Over Social Media <span class="text-red-500">*</span>
+                            </label>
+                            <select id="conflicts_over_social_media" name="conflicts_over_social_media" required
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                                <option value="">Select Frequency</option>
+                                <option value="Never">😊 Never</option>
+                                <option value="Rarely">🙂 Rarely</option>
+                                <option value="Sometimes">😐 Sometimes</option>
+                                <option value="Often">😟 Often</option>
+                                <option value="Very Often">😞 Very Often</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health & Wellness Section -->
+                <div class="pb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <span class="bg-social-pink text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3">3</span>
+                        Health & Wellness
+                    </h2>
+
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="sleep_hours_per_night" class="block text-sm font-medium text-gray-700 mb-2">
+                                Sleep Hours Per Night <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="sleep_hours_per_night" name="sleep_hours_per_night" min="0" max="24" step="0.5" required
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label for="mental_health_score" class="block text-sm font-medium text-gray-700 mb-2">
+                                Mental Health Score (1-10) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="mental_health_score" name="mental_health_score" min="1" max="10" required
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label for="relationship_status" class="block text-sm font-medium text-gray-700 mb-2">
+                                Relationship Status <span class="text-red-500">*</span>
+                            </label>
+                            <select id="relationship_status" name="relationship_status" required
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent">
+                                <option value="">Select Status</option>
+                                <option value="Single">💃 Single</option>
+                                <option value="In a relationship">💕 In a relationship</option>
+                                <option value="Married">💑 Married</option>
+                                <option value="Divorced">💔 Divorced</option>
+                                <option value="Other">❓ Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center pt-6">
+                    <button type="submit" id="predictBtn" disabled
+                            class="predict-button px-8 py-4 text-lg font-semibold text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            Predict Addiction Risk
+                        </span>
+                    </button>
+                    <p class="text-sm text-gray-500 mt-3">
+                        🔒 Your data is processed locally and never leaves your device
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="result" class="hidden mt-8 result-card">
+            <!-- Results will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        let modelLoaded = false;
+
+        async function loadModel() {
+            try {
+                pyodide = await loadPyodide();
+
+                // Install required packages
+                await pyodide.loadPackage(['micropip', 'numpy', 'scikit-learn', 'pandas', 'joblib']);
+
+                // Load the model service
+                await pyodide.runPythonAsync(`
+                    import micropip
+                    await micropip.install(['scikit-learn', 'pandas', 'numpy', 'joblib'])
+
+                    import json
+                    import pickle
+                    import base64
+                    from js import fetch
+
+                    # Fetch the model file
+                    response = await fetch('model/model.pkl')
+                    model_bytes = await response.bytes()
+
+                    # Load the model using pickle
+                    import io
+                    import joblib
+                    model_buffer = io.BytesIO(model_bytes)
+                    model_data = joblib.load(model_buffer)
+
+                    model = model_data['model']
+                    label_encoders = model_data['label_encoders']
+                    feature_columns = model_data['feature_columns']
+                    model_metrics = model_data['model_metrics']
+
+                    def preprocess_input(input_data):
+                        import pandas as pd
+                        import numpy as np
+
+                        # Create DataFrame from input data
+                        df = pd.DataFrame([input_data])
+
+                        # Map column names to match training data
+                        column_mapping = {
+                            'age': 'Age',
+                            'gender': 'Gender',
+                            'academic_level': 'Academic_Level',
+                            'country': 'Country',
+                            'avg_daily_usage_hours': 'Avg_Daily_Usage_Hours',
+                            'most_used_platform': 'Most_Used_Platform',
+                            'affects_academic_performance': 'Affects_Academic_Performance',
+                            'sleep_hours_per_night': 'Sleep_Hours_Per_Night',
+                            'mental_health_score': 'Mental_Health_Score',
+                            'relationship_status': 'Relationship_Status',
+                            'conflicts_over_social_media': 'Conflicts_Over_Social_Media'
+                        }
+
+                        df = df.rename(columns=column_mapping)
+
+                        # Apply label encoding
+                        for col, encoder in label_encoders.items():
+                            if col in df.columns:
+                                # Handle unseen categories
+                                if df[col].iloc[0] in encoder.classes_:
+                                    df[col] = encoder.transform(df[col])
+                                else:
+                                    # Assign -1 for unseen categories
+                                    df[col] = -1
+
+                        # Ensure all expected columns are present and in correct order
+                        for col in feature_columns:
+                            if col not in df.columns:
+                                df[col] = 0  # Default value for missing columns
+
+                        # Select and reorder columns
+                        df = df[feature_columns]
+
+                        return df
+
+                    def predict_addiction(input_data):
+                        try:
+                            # Preprocess input
+                            processed_data = preprocess_input(input_data)
+
+                            # Make prediction
+                            prediction = model.predict(processed_data)[0]
+
+                            # Ensure prediction is within expected range
+                            prediction = max(1.0, min(10.0, float(prediction)))
+
+                            # Determine risk category
+                            if prediction <= 3:
+                                risk_category = "Low"
+                            elif prediction <= 7:
+                                risk_category = "Medium"
+                            else:
+                                risk_category = "High"
+
+                            # Calculate confidence
+                            base_confidence = model_metrics['test_r2'] * 100
+                            confidence = max(60, min(95, int(base_confidence)))
+
+                            return {
+                                "predicted_addiction_score": round(prediction, 2),
+                                "risk_category": risk_category,
+                                "confidence": confidence
+                            }
+                        except Exception as e:
+                            return {"error": str(e)}
+
+                    print("Model loaded successfully!")
+                `);
+
+                modelLoaded = true;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('predictBtn').disabled = false;
+                console.log('Model loaded successfully');
+            } catch (error) {
+                console.error('Error loading model:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error loading model: ' + error.message;
+            }
+        }
+
+        // Load model when page loads
+        loadModel();
+
+        // Handle form submission
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!modelLoaded) {
+                alert('Model is still loading. Please wait...');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const inputData = {};
+            formData.forEach((value, key) => {
+                inputData[key] = value;
+            });
+
+            // Convert numeric fields
+            inputData['age'] = parseFloat(inputData['age']);
+            inputData['avg_daily_usage_hours'] = parseFloat(inputData['avg_daily_usage_hours']);
+            inputData['sleep_hours_per_night'] = parseFloat(inputData['sleep_hours_per_night']);
+            inputData['mental_health_score'] = parseFloat(inputData['mental_health_score']);
+
+            try {
+                const result = await pyodide.runPythonAsync(`
+                    predict_addiction(${JSON.stringify(inputData)})
+                `);
+
+                displayResult(result);
+            } catch (error) {
+                console.error('Prediction error:', error);
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Prediction error: ' + error.message;
+            }
+        });
+
+        function displayResult(result) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.classList.remove('hidden');
+
+            const riskIcons = {
+                'Low': '✅',
+                'Medium': '⚠️',
+                'High': '🚨'
+            };
+
+            const riskEmojis = {
+                'Low': '😊',
+                'Medium': '😐',
+                'High': '😟'
+            };
+
+            const recommendations = {
+                'Low': 'Great job! Keep maintaining your healthy social media habits. Continue setting boundaries and balancing your online and offline activities.',
+                'Medium': 'Be mindful of your usage patterns. Consider setting time limits, taking regular breaks, and scheduling offline activities to maintain a healthy balance.',
+                'High': 'It\'s time to take action. Consider reducing your daily usage, disabling notifications, and seeking support from friends, family, or professionals if needed.'
+            };
+
+            resultDiv.innerHTML = `
+                <div class="glass-effect rounded-2xl p-8 text-center">
+                    <div class="mb-6">
+                        <div class="text-6xl mb-4">${riskEmojis[result.risk_category]}</div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Your Results</h2>
+                        <div class="inline-flex items-center px-4 py-2 rounded-full text-white font-semibold text-lg mb-6 risk-${result.risk_category.toLowerCase()}">
+                            ${riskIcons[result.risk_category]} ${result.risk_category} Risk
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="text-4xl font-bold text-social-purple mb-2">${result.predicted_addiction_score}</div>
+                            <div class="text-gray-600 text-sm">Addiction Score</div>
+                            <div class="text-gray-500 text-xs mt-1">Out of 10</div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="text-4xl font-bold text-social-blue mb-2">${result.risk_category}</div>
+                            <div class="text-gray-600 text-sm">Risk Level</div>
+                            <div class="text-gray-500 text-xs mt-1">Based on your patterns</div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="text-4xl font-bold text-social-pink mb-2">${result.confidence}%</div>
+                            <div class="text-gray-600 text-sm">Confidence</div>
+                            <div class="text-gray-500 text-xs mt-1">Model accuracy</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg text-left">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            Personalized Recommendations
+                        </h3>
+                        <p class="text-blue-700 leading-relaxed">${recommendations[result.risk_category]}</p>
+                    </div>
+
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="window.print()" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
+                            📄 Save Results
+                        </button>
+                        <button onclick="document.getElementById('predictionForm').reset(); document.getElementById('result').classList.add('hidden');" class="px-6 py-3 bg-social-purple hover:bg-purple-700 text-white rounded-lg transition-colors">
+                            🔄 Take Another Assessment
+                        </button>
+                    </div>
+
+                    <div class="mt-6 text-xs text-gray-500">
+                        <p>💡 <strong>Did you know?</strong> Regular digital detoxes can significantly improve mental health and sleep quality.</p>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
