@@ -1,928 +1,350 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Social Media Addiction Predictor</title>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Social Media Addiction</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair Display">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work Sans">
+    <link rel="stylesheet" href="assets/css/style.css">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              "social-blue": "#1877F2",
-              "social-purple": "#8B5CF6",
-              "social-pink": "#EC4899",
+        tailwind.config = {
+            prefix: 'tw-', // Wajib ada biar class tidak bentrok
+            corePlugins: {
+               preflight: false, // <--- INI WAJIB ADA! Biar desain asli kamu tidak hancur
             },
-            animation: {
-              "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-              float: "float 6s ease-in-out infinite",
-            },
-            keyframes: {
-              float: {
-                "0%, 100%": { transform: "translateY(0px)" },
-                "50%": { transform: "translateY(-10px)" },
-              },
-            },
-          },
-        },
-      };
+            theme: {
+              extend: {
+                colors: { 
+                    "social-blue": "#1877F2", 
+                    "social-purple": "#8B5CF6", 
+                    "social-pink": "#EC4899" 
+                }
+              }
+            }
+        }
     </script>
+
     <style>
-      .gradient-bg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      }
-      .glass-effect {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-      }
-      .form-input {
-        transition: all 0.3s ease;
-      }
-      .form-input:focus {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
-      }
-      .predict-button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        transition: all 0.3s ease;
-      }
-      .predict-button:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
-      }
-      .result-card {
-        animation: slideInUp 0.5s ease-out;
-      }
-      @keyframes slideInUp {
-        from {
-          transform: translateY(30px);
-          opacity: 0;
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
         }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-      .risk-low {
-        background: linear-gradient(135deg, #10b981, #059669);
-      }
-      .risk-medium {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-      }
-      .risk-high {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-      }
+        /* Animasi Loading */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .tw-animate-spin { animation: spin 1s linear infinite; }
     </style>
-  </head>
-  <body class="gradient-bg min-h-screen">
-    <!-- Header Section -->
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-      <header class="text-center mb-12 animate-float">
-        <div
-          class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-6 shadow-lg"
-        >
-          <svg
-            class="w-10 h-10 text-social-purple"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-            />
-          </svg>
-        </div>
-        <h1 class="text-5xl font-bold text-white mb-4">
-          Social Media Addiction Predictor
-        </h1>
-        <p class="text-xl text-white/90 max-w-2xl mx-auto">
-          Understand your social media habits with our AI-powered assessment
-          tool. Get personalized insights based on your usage patterns.
-        </p>
-      </header>
 
-      <!-- Loading State -->
-      <div id="loading" class="glass-effect rounded-2xl p-8 mb-8 text-center">
-        <div class="inline-flex items-center space-x-3">
-          <div
-            class="animate-spin rounded-full h-8 w-8 border-b-2 border-social-purple"
-          ></div>
-          <span class="text-lg font-medium text-gray-700"
-            >Loading AI model...</span
-          >
-        </div>
-        <p class="text-sm text-gray-500 mt-2">
-          This may take a few seconds as we're preparing your personalized
-          experience
-        </p>
-      </div>
+</head>
 
-      <!-- Error State -->
-      <div
-        id="error"
-        class="hidden glass-effect rounded-2xl p-6 mb-8 border-l-4 border-red-500 bg-red-50"
-      >
-        <div class="flex items-center">
-          <svg
-            class="w-6 h-6 text-red-500 mr-3"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-            />
-          </svg>
-          <div>
-            <h3 class="text-lg font-medium text-red-800">
-              Oops! Something went wrong
-            </h3>
-            <p class="text-red-600 mt-1">
-              Please refresh the page and try again.
+<body>
+
+    <header>
+        <div class="logo">
+            <!-- Social Media Addiction -->
+            <img src="assets/images/unnamed-removebg-preview.png" alt="logo-image" class="logo-img">
+            <h1>Social Media Addiction</h1>
+        </div>
+
+<!-- Menu-->
+
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#Beranda">Beranda</a></li>
+                <li><a href="#client">Tentang Kami</a></li>
+                <li><a href="#tes">Cek Kecanduan</a></li>
+                <li><a href="#contact">Kontak Kami</a></li>
+            </ul>
+            <!-- Hamburger menu -->
+            <div class="hamburger-menu">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+
+            <div id="mobileMenu">
+                <ul class="nav-links-mobile">
+                    <li><a href="#Beranda"><i class="fa fa-home"></i> Beranda</a></li>
+                    <li><a href="#client"><i class="fa fa-info-circle"></i> Tentang Kami</a></li>
+                    <li><a href="#tes"><i class="fa fa-stethoscope"></i> Cek Kecanduan</a></li>
+                    <li><a href="#contact"><i class="far fa-address-book"></i> Kontak Kami</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+<!-- Menu END -->
+
+<!-- Beranda -->
+
+    <section class="hero container" id="Beranda">
+        <div class="hero-left">
+            <h1>
+                Hi, Digital Explorers!
+            </h1>
+            <p>
+                Selamat datang di Social Media Addiction Detector, 
+                platform yang membantumu mengenali sejauh mana 
+                ketergantunganmu terhadap media sosial. Social media 
+                addiction adalah kondisi ketika seseorang sulit 
+                mengendalikan penggunaan medsos hingga memengaruhi 
+                aktivitas, emosi, atau kehidupan sehari-hari 📱. 
+                Melalui website ini, kamu bisa mengecek pola 
+                penggunaanmu, memahami risikonya, dan mendapatkan 
+                edukasi untuk tetap seimbang di dunia digital 🌿.
             </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Form -->
-      <div class="glass-effect rounded-2xl p-8 shadow-2xl">
-        <form id="predictionForm" class="space-y-6">
-          <!-- Personal Information Section -->
-          <div class="border-b border-gray-200 pb-6">
-            <h2
-              class="text-2xl font-semibold text-gray-800 mb-6 flex items-center"
-            >
-              <span
-                class="bg-social-purple text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3"
-                >1</span
-              >
-              Personal Information
-            </h2>
-
-            <div class="grid md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  for="age"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Age <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  id="age"
-                  name="age"
-                  min="13"
-                  max="100"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label
-                  for="gender"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Gender <span class="text-red-500">*</span>
-                </label>
-                <select
-                  id="gender"
-                  name="gender"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  for="academic_level"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Academic Level <span class="text-red-500">*</span>
-                </label>
-                <select
-                  id="academic_level"
-                  name="academic_level"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                >
-                  <option value="">Select Academic Level</option>
-                  <option value="High School">High School</option>
-                  <option value="Undergraduate">Undergraduate</option>
-                  <option value="Graduate">Graduate</option>
-                  <option value="Postgraduate">Postgraduate</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  for="country"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Country <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="country"
-                  name="country"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Social Media Usage Section -->
-          <div class="border-b border-gray-200 pb-6">
-            <h2
-              class="text-2xl font-semibold text-gray-800 mb-6 flex items-center"
-            >
-              <span
-                class="bg-social-blue text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3"
-                >2</span
-              >
-              Social Media Usage
-            </h2>
-
-            <div class="grid md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  for="avg_daily_usage_hours"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Average Daily Usage (hours)
-                  <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  id="avg_daily_usage_hours"
-                  name="avg_daily_usage_hours"
-                  min="0"
-                  max="24"
-                  step="0.5"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label
-                  for="most_used_platform"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Most Used Platform <span class="text-red-500">*</span>
-                </label>
-                <select
-                  id="most_used_platform"
-                  name="most_used_platform"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                >
-                  <option value="">Select Platform</option>
-                  <option value="Instagram">📷 Instagram</option>
-                  <option value="Facebook">📘 Facebook</option>
-                  <option value="Twitter">🐦 Twitter</option>
-                  <option value="TikTok">🎵 TikTok</option>
-                  <option value="YouTube">📺 YouTube</option>
-                  <option value="Snapchat">👻 Snapchat</option>
-                  <option value="LinkedIn">💼 LinkedIn</option>
-                  <option value="Other">📱 Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  for="affects_academic_performance"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Affects Academic Performance
-                  <span class="text-red-500">*</span>
-                </label>
-                <select
-                  id="affects_academic_performance"
-                  name="affects_academic_performance"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                >
-                  <option value="">Select Impact</option>
-                  <option value="No">✅ No Impact</option>
-                  <option value="Yes">📉 Affects Performance</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  for="conflicts_over_social_media"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Conflicts Over Social Media
-                  <span class="text-red-500">*</span>
-                </label>
-                <select
-                  id="conflicts_over_social_media"
-                  name="conflicts_over_social_media"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                >
-                  <option value="">Select Frequency</option>
-                  <option value="0">😊 Never</option>
-                  <option value="1">🙂 Rarely</option>
-                  <option value="2">😐 Sometimes</option>
-                  <option value="3">😟 Often</option>
-                  <option value="4">😞 Very Often</option>
-                  <option value="5">🚨 Daily</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Health & Wellness Section -->
-          <div class="pb-6">
-            <h2
-              class="text-2xl font-semibold text-gray-800 mb-6 flex items-center"
-            >
-              <span
-                class="bg-social-pink text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3"
-                >3</span
-              >
-              Health & Wellness
-            </h2>
-
-            <div class="grid md:grid-cols-3 gap-6">
-              <div>
-                <label
-                  for="sleep_hours_per_night"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Sleep Hours Per Night <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  id="sleep_hours_per_night"
-                  name="sleep_hours_per_night"
-                  min="0"
-                  max="24"
-                  step="0.5"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label
-                  for="mental_health_score"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Mental Health Score (1-10) <span class="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  id="mental_health_score"
-                  name="mental_health_score"
-                  min="1"
-                  max="10"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label
-                  for="relationship_status"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Relationship Status <span class="text-red-500">*</span>
-                </label>
-                <select
-                  id="relationship_status"
-                  name="relationship_status"
-                  required
-                  class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-social-purple focus:border-transparent"
-                >
-                  <option value="">Select Status</option>
-                  <option value="Single">💃 Single</option>
-                  <option value="In a relationship">
-                    💕 In a relationship
-                  </option>
-                  <option value="Married">💑 Married</option>
-                  <option value="Divorced">💔 Divorced</option>
-                  <option value="Other">❓ Other</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="text-center pt-6">
-            <button
-              type="submit"
-              id="predictBtn"
-              disabled
-              class="predict-button px-8 py-4 text-lg font-semibold text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="flex items-center justify-center">
-                <svg
-                  class="w-5 h-5 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                  />
-                </svg>
-                Predict Addiction Risk
-              </span>
+            <button class="btn-primary">
+                <a href="#tes">Mulai Tes</a>
             </button>
-            <p class="text-sm text-gray-500 mt-3">
-              🔒 Your data is processed locally and never leaves your device
+        </div>
+        <div class="hero-right">
+            <img src="assets/images/Gemini_Generated_Image_lkl5x4lkl5x4lkl5.png" alt="hero-image" class="hero-img">
+        </div>
+    </section>
+
+<!-- Beranda END -->
+
+<!-- Tentang Kami-->
+
+    <section class="client container" id="client">
+        <div class="client-left">
+            <h1>Tentang Kami</h1>
+            <p>
+                Website ini dibuat oleh Kelompok 3 dalam mata kuliah Matematika Diskrit sebagai bagian dari 
+                pemenuhan tugas akhir. Kelompok kami yang beranggotakan 
+                Karindra Rafi Linux Hirarki,
+                Rika Amalia Nurmayani,
+                Farrel Fatih Bhimawan, dan
+                Elvyn Abdurrahim berkolaborasi dalam merancang serta mengembangkan website pendeteksi kecanduan media sosial,
+                mulai dari perancangan konsep hingga implementasi. Di samping teks ini juga ditampilkan foto dokumentasi
+                saat presentasi bersama mitra, yang menggambarkan proses penyampaian hasil kerja dan penerimaan masukan
+                untuk penyempurnaan proyek.
             </p>
-          </div>
-        </form>
-      </div>
-
-      <!-- Results Section -->
-      <div id="result" class="hidden mt-8 result-card">
-        <!-- Results will be dynamically inserted here -->
-      </div>
-    </div>
-
-    <script>
-      let pyodide;
-      let modelLoaded = false;
-
-      async function loadModel() {
-        try {
-          pyodide = await loadPyodide();
-
-          // Install required packages for pickle support
-          console.log("Loading PKL prediction model...");
-
-          await pyodide.runPythonAsync(`
-                    import json
-                    from js import fetch
-
-                    # Load the JSON model file
-                    response = await fetch('https://raw.githubusercontent.com/karindralinux/social-media-addiction/refs/heads/main/model/model_pyodide.json')
-
-                    if not response.ok:
-                        raise Exception(f"Failed to fetch model: {response.status}")
-
-                    # Parse JSON directly
-                    model_text = await response.text()
-                    model_data = json.loads(model_text)
-
-                    # Debug: Check available keys in model_data
-                    print(f"Available keys in model_data: {list(model_data.keys())}")
-
-                    # Extract model components with proper key handling
-                    trees = model_data.get('trees', [])
-                    label_encoders = model_data.get('label_encoders', {})
-                    feature_columns = model_data.get('feature_columns', model_data.get('feature_names', []))
-                    model_metrics = model_data.get('model_metrics', {})
-                    n_features = model_data.get('n_features_in_', len(feature_columns))
-
-                    print(f"Loaded {len(trees)} trees with {n_features} features")
-                    print(f"Feature columns: {feature_columns}")
-                    print(f"Label encoders keys: {list(label_encoders.keys())}")
-
-                    def predict_single_tree(features, tree):
-                        """Navigate through a single decision tree"""
-                        node = 0  # Start at root
-
-                        # Handle both nested and flat tree structures
-                        tree_data = tree.get('tree', tree)
-
-                        # Safety checks for tree structure
-                        if not tree_data or 'children_left' not in tree_data:
-                            print("Invalid tree structure")
-                            return 0.0
-
-                        max_nodes = len(tree_data['children_left'])
-                        print(f"Tree has {max_nodes} nodes")
-
-                        while node < max_nodes and node >= 0:
-                            # Check if we're at a leaf node
-                            left_child = tree_data['children_left'][node]
-                            if left_child == -1:
-                                print(f"Reached leaf node {node}")
-                                break
-
-                            # Get feature index and threshold with bounds checking
-                            feature_idx = tree_data['feature'][node]
-                            threshold = tree_data['threshold'][node]
-
-                            # Safety check for feature index
-                            if feature_idx == -2:
-                                print(f"Node {node}: Using default direction (feature_idx = -2)")
-                                node = left_child
-                                continue
-                            elif feature_idx < 0 or feature_idx >= len(features):
-                                print(f"Feature index {feature_idx} out of bounds (features length: {len(features)})")
-                                return 0.0
-
-                            feature_value = features[feature_idx]
-                            print(f"Node {node}: feature[{feature_idx}] = {feature_value} <= {threshold}?")
-
-                            # Navigate based on feature comparison with bounds checking
-                            try:
-                                if feature_value <= threshold:
-                                    next_node = tree_data['children_left'][node]
-                                else:
-                                    next_node = tree_data['children_right'][node]
-
-                                if next_node < 0 or next_node >= max_nodes:
-                                    print(f"Next node {next_node} out of bounds, stopping at leaf")
-                                    break
-
-                                node = next_node
-                            except IndexError as e:
-                                print(f"Navigation error at node {node}: {e}")
-                                return 0.0
-
-                        # Return the value at the leaf node
-                        try:
-                            # Debug tree value structure
-                            if node >= max_nodes or node < 0:
-                                print(f"Node {node} out of bounds when accessing value")
-                                return 0.0
-
-                            value_structure = tree_data['value'][node]
-                            print(f"Tree value at node {node}: {value_structure}")
-
-                            # Try different ways to access the value
-                            if isinstance(value_structure, list) and len(value_structure) > 0:
-                                if isinstance(value_structure[0], list) and len(value_structure[0]) > 0:
-                                    return float(value_structure[0][0])
-                                else:
-                                    return float(value_structure[0])
-                            else:
-                                return float(value_structure)
-                        except Exception as e:
-                            print(f"Warning: Could not access tree value at node {node}: {e}")
-                            print(f"Tree value type: {type(tree_data['value'][node]) if node < len(tree_data['value']) else 'N/A'}")
-                            return 0.0  # Default fallback
-
-                    def preprocess_input(input_data):
-                        """Simple preprocessing without any dependencies"""
-                        print(f"Starting preprocessing with input: {input_data}")
-
-                        # Map column names to match training data
-                        column_mapping = {
-                            'age': 'Age',
-                            'gender': 'Gender',
-                            'academic_level': 'Academic_Level',
-                            'country': 'Country',
-                            'avg_daily_usage_hours': 'Avg_Daily_Usage_Hours',
-                            'most_used_platform': 'Most_Used_Platform',
-                            'affects_academic_performance': 'Affects_Academic_Performance',
-                            'sleep_hours_per_night': 'Sleep_Hours_Per_Night',
-                            'mental_health_score': 'Mental_Health_Score',
-                            'relationship_status': 'Relationship_Status',
-                            'conflicts_over_social_media': 'Conflicts_Over_Social_Media'
-                        }
-
-                        # Apply column mapping
-                        processed_data = {}
-                        for key, value in input_data.items():
-                            mapped_key = column_mapping.get(key, key)
-                            processed_data[mapped_key] = value
-                            print(f"Mapped {key} -> {mapped_key}: {value} (type: {type(value)})")
-
-                        # Apply label encoding
-                        for col, encoder_info in label_encoders.items():
-                            if col in processed_data:
-                                value = processed_data[col]
-                                classes = encoder_info['classes']
-                                print(f"Encoding {col}: {value} from classes {classes}")
-
-                                # Handle unseen categories
-                                if value in classes:
-                                    # Simple encoding: find the index of the value
-                                    encoded_value = classes.index(value)
-                                    processed_data[col] = encoded_value
-                                    print(f"Encoded {col} {value} -> {encoded_value}")
-                                else:
-                                    # Assign -1 for unseen categories
-                                    processed_data[col] = -1
-                                    print(f"Unseen category {col} {value}, assigned -1")
-
-                        # Ensure all expected columns are present
-                        feature_vector = []
-                        for col in feature_columns:
-                            value = processed_data.get(col, 0)
-                            print(f"Feature {col}: {value} (type: {type(value)})")
-                            try:
-                                float_value = float(value)
-                                feature_vector.append(float_value)
-                                print(f"Successfully converted {col}: {float_value}")
-                            except Exception as e:
-                                print(f"Error converting {col} value {value}: {e}")
-                                feature_vector.append(0.0)  # Default fallback
-
-                        print(f"Final feature vector: {feature_vector}")
-                        return feature_vector
-
-                    def predict_addiction(input_data):
-                        """Prediction using JSON forest trees"""
-                        try:
-                            print(f"Input data: {input_data}")
-
-                            # Preprocess input
-                            features = preprocess_input(input_data)
-                            print(f"Processed features: {features}")
-                            print(f"Number of features: {len(features)}")
-
-                            # Make predictions using all trees
-                            tree_predictions = []
-                            for i, tree in enumerate(trees):
-                                # Debug tree structure
-                                if i == 0:
-                                    tree_data = tree.get('tree', tree)
-                                    if 'feature' in tree_data:
-                                        print(f"First tree features: {tree_data['feature'][:10]}...")  # First 10 features
-                                        print(f"Feature indices in tree: {set(tree_data['feature'])}")
-                                        print(f"Max feature index in tree: {max(tree_data['feature']) if tree_data['feature'] else 'N/A'}")
-                                    print(f"Feature vector length: {len(features)}")
-
-                                pred = predict_single_tree(features, tree)
-                                tree_predictions.append(pred)
-                                if i == 0:  # Debug first tree
-                                    print(f"First tree prediction: {pred}")
-
-                            print(f"All tree predictions: {tree_predictions}")
-
-                            # Average the predictions
-                            prediction = sum(tree_predictions) / len(tree_predictions)
-                            print(f"Average prediction: {prediction}")
-
-                            # Ensure prediction is within expected range
-                            prediction = max(1.0, min(10.0, float(prediction)))
-
-                            # Determine risk category
-                            if prediction <= 3:
-                                risk_category = "Low"
-                            elif prediction <= 7:
-                                risk_category = "Medium"
-                            else:
-                                risk_category = "High"
-
-                            # Calculate confidence
-                            base_confidence = model_metrics['test_r2'] * 100
-                            confidence = max(60, min(95, int(base_confidence)))
-
-                            result = {
-                                "predicted_addiction_score": round(prediction, 2),
-                                "risk_category": risk_category,
-                                "confidence": confidence
-                            }
-                            print(f"Final result: {result}")
-                            return result
-
-                        except Exception as e:
-                            print(f"Error in prediction: {e}")
-                            import traceback
-                            traceback.print_exc()
-                            return {"error": str(e)}
-
-                    print("✅ Model loaded successfully!")
-                `);
-
-          modelLoaded = true;
-          document.getElementById("loading").style.display = "none";
-          document.getElementById("predictBtn").disabled = false;
-          console.log("✅ Model loaded successfully!");
-        } catch (error) {
-          console.error("❌ Error loading model:", error);
-          document.getElementById("loading").style.display = "none";
-          document.getElementById("error").style.display = "block";
-          document.getElementById("error").textContent =
-            "Error loading model: " + error.message;
-        }
-      }
-
-      // Load model when page loads
-      loadModel();
-
-      // Handle form submission
-      document
-        .getElementById("predictionForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          if (!modelLoaded) {
-            alert("Model is still loading. Please wait...");
-            return;
-          }
-
-          const formData = new FormData(e.target);
-          const inputData = {};
-          formData.forEach((value, key) => {
-            inputData[key] = value;
-          });
-
-          // Only convert specific numeric fields
-          const numericFields = [
-            "age",
-            "avg_daily_usage_hours",
-            "sleep_hours_per_night",
-            "mental_health_score",
-          ];
-          numericFields.forEach((field) => {
-            if (inputData[field]) {
-              inputData[field] = parseFloat(inputData[field]);
-            }
-          });
-
-          // Keep all other fields as strings for label encoding
-          console.log("Processed input data:", inputData);
-
-          try {
-            const result = await pyodide.runPythonAsync(`
-                    predict_addiction(${JSON.stringify(inputData)})
-                `);
-
-            console.log("Raw Pyodide result:", result);
-            console.log("Result type:", typeof result);
-
-            // Convert Pyodide proxy to JavaScript object
-            const jsResult = result.toJs ? result.toJs() : result;
-            console.log("Converted result:", jsResult);
-            console.log("Result type:", typeof jsResult);
-            console.log("Result constructor:", jsResult?.constructor?.name);
-
-            // Handle Map conversion
-            let finalResult = jsResult;
-            if (jsResult instanceof Map) {
-              console.log("Converting Map to plain object");
-              finalResult = Object.fromEntries(jsResult);
-            }
-
-            console.log("Final result:", finalResult);
-            console.log(
-              "Result keys:",
-              finalResult ? Object.keys(finalResult) : "null/undefined"
-            );
-
-            displayResult(finalResult);
-          } catch (error) {
-            console.error("Prediction error:", error);
-            document.getElementById("error").style.display = "block";
-            document.getElementById("error").textContent =
-              "Prediction error: " + error.message;
-          }
-        });
-
-      function displayResult(result) {
-        const resultDiv = document.getElementById("result");
-        resultDiv.classList.remove("hidden");
-
-        // Check if result contains an error
-        if (result.error) {
-          resultDiv.innerHTML = `
-                    <div class="glass-effect rounded-2xl p-8 text-center">
-                        <div class="mb-6">
-                            <div class="text-6xl mb-4">❌</div>
-                            <h2 class="text-3xl font-bold text-red-600 mb-2">Prediction Error</h2>
-                        </div>
-                        <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg text-left">
-                            <p class="text-red-700"><strong>Error:</strong> ${result.error}</p>
-                            <p class="text-red-600 mt-2">Please try again or check your input values.</p>
-                        </div>
-                        <div class="mt-6">
-                            <button onclick="document.getElementById('result').classList.add('hidden');" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
-                                ❌ Close
-                            </button>
-                        </div>
+        </div>
+        <div class="client-right">
+            <div class="client-wrapper">
+                <div class="client-items-1">
+                    <div class="client-item">
+                        <img src="assets/images/client-1.png" alt="Netflix" srcset="">
                     </div>
-                `;
-          return;
-        }
-
-        // Validate result has expected properties
-        if (
-          !result.risk_category ||
-          !result.predicted_addiction_score ||
-          !result.confidence
-        ) {
-          resultDiv.innerHTML = `
-                    <div class="glass-effect rounded-2xl p-8 text-center">
-                        <div class="mb-6">
-                            <div class="text-6xl mb-4">⚠️</div>
-                            <h2 class="text-3xl font-bold text-yellow-600 mb-2">Invalid Result</h2>
-                        </div>
-                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg text-left">
-                            <p class="text-yellow-700">The prediction result is incomplete. Please try again.</p>
-                            <p class="text-yellow-600 mt-2">Debug info: ${JSON.stringify(
-                              result
-                            )}</p>
-                        </div>
-                        <div class="mt-6">
-                            <button onclick="document.getElementById('result').classList.add('hidden');" class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors">
-                                ⚠️ Close
-                            </button>
-                        </div>
-                    </div>
-                `;
-          return;
-        }
-
-        const riskIcons = {
-          Low: "✅",
-          Medium: "⚠️",
-          High: "🚨",
-        };
-
-        const riskEmojis = {
-          Low: "😊",
-          Medium: "😐",
-          High: "😟",
-        };
-
-        const recommendations = {
-          Low: "Great job! Keep maintaining your healthy social media habits. Continue setting boundaries and balancing your online and offline activities.",
-          Medium:
-            "Be mindful of your usage patterns. Consider setting time limits, taking regular breaks, and scheduling offline activities to maintain a healthy balance.",
-          High: "It's time to take action. Consider reducing your daily usage, disabling notifications, and seeking support from friends, family, or professionals if needed.",
-        };
-
-        // Ensure risk category is valid
-        const riskCategory = result.risk_category;
-        if (!riskIcons[riskCategory]) {
-          console.error("Invalid risk category:", riskCategory);
-          return;
-        }
-
-        resultDiv.innerHTML = `
-                <div class="glass-effect rounded-2xl p-8 text-center">
-                    <div class="mb-6">
-                        <div class="text-6xl mb-4">${
-                          riskEmojis[riskCategory]
-                        }</div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Your Results</h2>
-                        <div class="inline-flex items-center px-4 py-2 rounded-full text-white font-semibold text-lg mb-6 risk-${riskCategory.toLowerCase()}">
-                            ${riskIcons[riskCategory]} ${riskCategory} Risk
-                        </div>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <div class="text-4xl font-bold text-social-purple mb-2">${
-                              result.predicted_addiction_score
-                            }</div>
-                            <div class="text-gray-600 text-sm">Addiction Score</div>
-                            <div class="text-gray-500 text-xs mt-1">Out of 10</div>
-                        </div>
-
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <div class="text-4xl font-bold text-social-blue mb-2">${
-                              result.risk_category
-                            }</div>
-                            <div class="text-gray-600 text-sm">Risk Level</div>
-                            <div class="text-gray-500 text-xs mt-1">Based on your patterns</div>
-                        </div>
-
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <div class="text-4xl font-bold text-social-pink mb-2">${
-                              result.confidence
-                            }%</div>
-                            <div class="text-gray-600 text-sm">Confidence</div>
-                            <div class="text-gray-500 text-xs mt-1">Model accuracy</div>
-                        </div>
-                    </div>
-
-                    <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg text-left">
-                        <h3 class="text-lg font-semibold text-blue-800 mb-3 flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                            Personalized Recommendations
-                        </h3>
-                        <p class="text-blue-700 leading-relaxed">${
-                          recommendations[result.risk_category]
-                        }</p>
-                    </div>
-
-                    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onclick="window.print()" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
-                            📄 Save Results
-                        </button>
-                        <button onclick="document.getElementById('predictionForm').reset(); document.getElementById('result').classList.add('hidden');" class="px-6 py-3 bg-social-purple hover:bg-purple-700 text-white rounded-lg transition-colors">
-                            🔄 Take Another Assessment
-                        </button>
-                    </div>
-
-                    <div class="mt-6 text-xs text-gray-500">
-                        <p>💡 <strong>Did you know?</strong> Regular digital detoxes can significantly improve mental health and sleep quality.</p>
+                    <div class="client-item">
+                        <img src="assets/images/Image_1669606404.png" alt="BUMN" srcset="">
                     </div>
                 </div>
-            `;
-      }
-    </script>
-  </body>
+                <div class="client-items-2">
+                    <div class="client-item">
+                        <img src="assets/images/client-3.png" alt="indeed" srcset="">
+                    </div>
+                    <div class="client-item">
+                        <img src="assets/images/client-4.png" alt="Linked In" srcset="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- Tentang Kami END -->
+
+<!-- Tes -->
+
+ <section id="tes" class="tw-relative tw-w-full tw-min-h-screen tw-py-10 md:tw-py-20" style="background-color: #faeee7;">
+    <div class="container tw-mx-auto tw-px-4 tw-max-w-4xl">
+        
+        <div class="tw-text-center tw-mb-12 tw-animate-bounce">
+            <div class="tw-inline-flex tw-items-center tw-justify-center tw-w-20 tw-h-20 tw-bg-white tw-rounded-full tw-mb-6 tw-shadow-lg">
+                <i class="fa-solid fa-check tw-text-3xl tw-text-purple-600"></i>
+            </div>
+            <h1 class="tw-text-5xl tw-font-bold tw-text-black tw-mb-4">Social Media Addiction Predictor</h1>
+            <p class="tw-text-xl tw-text-black/90 tw-max-w-2xl tw-mx-auto">
+                Understand your social media habits with our AI-powered assessment tool.
+            </p>
+        </div>
+
+        <div id="loading" class="glass-effect tw-rounded-2xl tw-p-8 tw-mb-8 tw-text-center tw-bg-white/90 tw-backdrop-blur-sm">
+            <div class="tw-inline-flex tw-items-center tw-space-x-3">
+                <div class="tw-animate-spin tw-rounded-full tw-h-8 tw-w-8 tw-border-b-2 tw-border-purple-600"></div>
+                <span class="tw-text-lg tw-font-medium tw-text-gray-700">Loading AI model...</span>
+            </div>
+        </div>
+
+        <div id="error" class="tw-hidden tw-bg-red-50 tw-rounded-2xl tw-p-6 tw-mb-8 tw-border-l-4 tw-border-red-500">
+            <h3 class="tw-text-lg tw-font-medium tw-text-red-800">Error</h3>
+            <p class="tw-text-red-600 tw-mt-1" id="error-text">Please refresh.</p>
+        </div>
+
+        <div class="glass-effect tw-rounded-2xl tw-p-8 tw-shadow-2xl tw-bg-white">
+            <form id="predictionForm" class="tw-space-y-8">
+                
+                <div class="tw-border-b tw-border-gray-200 tw-pb-6">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-800 tw-mb-6 tw-flex tw-items-center">
+                        <span class="tw-bg-purple-500 tw-text-white tw-rounded-full tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-text-sm tw-mr-3">1</span>
+                        Personal Information
+                    </h2>
+                    <div class="tw-grid md:tw-grid-cols-2 tw-gap-6">
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Age <span class="tw-text-red-500">*</span></label>
+                            <input type="number" name="age" min="13" required 
+                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg focus:tw-ring-2 focus:tw-ring-purple-500">
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Gender <span class="tw-text-red-500">*</span></label>
+                            <select name="gender" required 
+                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Academic Level <span class="tw-text-red-500">*</span></label>
+                            <select name="academic_level" required 
+                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                                <option value="">Select Academic Level</option>
+                                <option value="High School">High School</option>
+                                <option value="Undergraduate">Undergraduate</option>
+                                <option value="Graduate">Graduate</option>
+                                <option value="Postgraduate">Postgraduate</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Country <span class="tw-text-red-500">*</span></label>
+                            <input type="text" name="country" placeholder="e.g. Indonesia" required 
+                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tw-border-b tw-border-gray-200 tw-pb-6">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-800 tw-mb-6 tw-flex tw-items-center">
+                        <span class="tw-bg-blue-500 tw-text-white tw-rounded-full tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-text-sm tw-mr-3">2</span>
+                        Social Media Usage
+                    </h2>
+                    <div class="tw-grid md:tw-grid-cols-2 tw-gap-6">
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Average Daily Usage (hours) <span class="tw-text-red-500">*</span></label>
+                            <input type="number" name="avg_daily_usage_hours" step="0.5" required 
+                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Most Used Platform <span class="tw-text-red-500">*</span></label>
+                            <select name="most_used_platform" required 
+                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                                <option value="">Select Platform</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Twitter">Twitter</option>
+                                <option value="TikTok">TikTok</option>
+                                <option value="YouTube">YouTube</option>
+                                <option value="Snapchat">Snapchat</option>
+                                <option value="LinkedIn">LinkedIn</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Affects Academic Performance <span class="tw-text-red-500">*</span></label>
+                            <select name="affects_academic_performance" required 
+                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                                <option value="">Select Impact</option>
+                                <option value="No">No Impact</option>
+                                <option value="Yes">Affects Performance</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Conflicts Over Social Media <span class="tw-text-red-500">*</span></label>
+                            <select name="conflicts_over_social_media" required 
+                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                                <option value="">Select Frequency</option>
+                                <option value="0">Never</option>
+                                <option value="1">Rarely</option>
+                                <option value="2">Sometimes</option>
+                                <option value="3">Often</option>
+                                <option value="4">Very Often</option>
+                                <option value="5">Daily</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tw-pb-6">
+                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-800 tw-mb-6 tw-flex tw-items-center">
+                        <span class="tw-bg-pink-500 tw-text-white tw-rounded-full tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-text-sm tw-mr-3">3</span>
+                        Health & Wellness
+                    </h2>
+                    <div class="tw-grid md:tw-grid-cols-3 tw-gap-6">
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Sleep Hours Per Night <span class="tw-text-red-500">*</span></label>
+                            <input type="number" name="sleep_hours_per_night" step="0.5" required 
+                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Mental Health Score (1-10) <span class="tw-text-red-500">*</span></label>
+                            <input type="number" name="mental_health_score" min="1" max="10" required 
+                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                        </div>
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Relationship Status <span class="tw-text-red-500">*</span></label>
+                            <select name="relationship_status" required 
+                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
+                                <option value="">Select Status</option>
+                                <option value="Single">Single</option>
+                                <option value="In a relationship">In a relationship</option>
+                                <option value="Married">Married</option>
+                                <option value="Divorced">Divorced</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tw-text-center tw-pt-4">
+                    <button type="submit" id="predictBtn" disabled class="tw-bg-gradient-to-r tw-from-indigo-500 tw-to-purple-600 tw-text-white tw-font-bold tw-py-4 tw-px-10 tw-rounded-xl hover:tw-opacity-90 disabled:tw-opacity-50 tw-transition-all tw-shadow-lg tw-w-full md:tw-w-auto">
+                        ✨ Predict Addiction Risk
+                    </button>
+                    <p class="tw-text-sm tw-text-gray-500 tw-mt-3">🔒 Your data is processed locally and never leaves your device</p>
+                </div>
+            </form>
+        </div>
+
+        <div id="result" class="tw-hidden tw-mt-8 tw-animate-fade-in-up">
+            <div class="glass-effect tw-rounded-2xl tw-p-8 tw-text-center tw-bg-white tw-shadow-2xl tw-border-2 tw-border-white/50">
+                <div id="result-content"></div>
+                
+                <button onclick="location.reload()" class="tw-mt-6 tw-px-6 tw-py-3 tw-bg-gray-100 tw-rounded-lg hover:tw-bg-gray-200 tw-font-semibold tw-text-gray-700">
+                    🔄 Check Again
+                </button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Tes END -->
+
+<!-- Kontak Kami -->
+
+<div class="contact container" id="contact">
+        <h1>Kritik dan Saran</h1>
+        <form action="https://formspree.io/f/meqywpdv" method="post">
+            <input type="text" name="nama" placeholder="Nama">
+            <input type="email" name="email" placeholder="Email">
+            <textarea name="pesan" id="email" cols="30" rows="10" placeholder="Pesan"></textarea>
+            <button class="btn-primary" type="submit">Kirim</button>
+        </form>
+    </div>
+
+<!-- Kontak Kami END-->
+
+    <footer>
+        <p> Made With Kelompok 3 ♡🌹💐 </p>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+
+    <script src="assets/js/logic-prediksi.js"></script>
+</body>
 </html>
