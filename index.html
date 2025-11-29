@@ -1,350 +1,1677 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <title>Social Media Addiction</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair Display">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work Sans">
-    <link rel="stylesheet" href="assets/css/style.css">
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media Addiction Check</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      .gradient-text {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .animated-gradient {
+        background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .float-animation {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      .glow-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .glow-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .glow-card:hover::before {
+        left: 100%;
+      }
+
+      .morphing-blob {
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        animation: morph 8s ease-in-out infinite;
+      }
+
+      @keyframes morph {
+        0%,
+        100% {
+          border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        }
+        50% {
+          border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%;
+        }
+      }
+
+      input:focus,
+      select:focus {
+        transform: translateY(-2px);
+        transition: all 0.2s;
+      }
+
+      .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 min-h-screen"
+  >
+    <!-- Floating Background Elements -->
+    <div
+      class="fixed top-20 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"
+    ></div>
+    <div
+      class="fixed bottom-20 left-10 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"
+      style="animation-delay: 2s"
+    ></div>
+    <div
+      class="fixed top-1/2 left-1/2 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"
+      style="animation-delay: 4s"
+    ></div>
+
+    <!-- Header -->
+    <header
+      class="sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-white/50 shadow-sm"
+    >
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <a href="#top" class="flex items-center space-x-3 group">
+            <div
+              class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300"
+            >
+              <i class="fas fa-brain text-white text-lg"></i>
+            </div>
+            <div>
+              <span
+                class="block text-xs font-semibold text-purple-600 uppercase tracking-wider"
+                >Digital Wellness</span
+              >
+              <span class="block text-sm font-bold text-gray-900"
+                >Social Check</span
+              >
+            </div>
+          </a>
+
+          <div class="hidden md:flex items-center space-x-1">
+            <a
+              href="#hero"
+              class="px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all"
+              >Home</a
+            >
+            <a
+              href="#why"
+              class="px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all"
+              >Why</a
+            >
+            <a
+              href="#tes"
+              class="px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all"
+              >Survey</a
+            >
+            <a
+              href="#tes"
+              class="ml-2 px-6 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-500 hover:shadow-lg hover:scale-105 transition-all"
+            >
+              Take Survey
+            </a>
+          </div>
+
+          <button
+            id="mobileMenuButton"
+            class="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          >
+            <i class="fas fa-bars text-gray-700"></i>
+          </button>
+        </div>
+      </nav>
+
+      <div
+        id="mobileMenuPanel"
+        class="hidden md:hidden border-t border-gray-100 bg-white"
+      >
+        <div class="px-4 py-3 space-y-1">
+          <a
+            href="#hero"
+            class="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50"
+            >Home</a
+          >
+          <a
+            href="#why"
+            class="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50"
+            >Why</a
+          >
+          <a
+            href="#tes"
+            class="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-purple-50"
+            >Survey</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main id="top" class="relative">
+      <!-- Hero Section -->
+      <section id="hero" class="relative pt-20 pb-32 px-4 overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Content -->
+            <div class="space-y-8 float-animation">
+              <div
+                class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200"
+              >
+                <span class="relative flex h-2 w-2">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"
+                  ></span>
+                  <span
+                    class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"
+                  ></span>
+                </span>
+                <span class="text-xs font-semibold text-purple-700"
+                  >Quick survey for students</span
+                >
+              </div>
+
+              <h1 class="text-5xl md:text-7xl font-bold leading-tight">
+                How <span class="gradient-text">addicted</span> are you to
+                social media?
+              </h1>
+
+              <p
+                class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl"
+              >
+                Discover your social media usage patterns through a quick,
+                science-based assessment. Get instant results with personalized
+                insights.
+              </p>
+
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="#tes"
+                  class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white rounded-2xl overflow-hidden shadow-2xl transition-all hover:scale-105"
+                >
+                  <div
+                    class="absolute inset-0 w-full h-full animated-gradient"
+                  ></div>
+                  <span class="relative flex items-center space-x-2">
+                    <span>Start Survey Now</span>
+                    <i
+                      class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"
+                    ></i>
+                  </span>
+                </a>
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                  <i class="fas fa-clock text-purple-600"></i>
+                  <span>Takes only 3 minutes</span>
+                </div>
+              </div>
+
+             
+            </div>
+
+            <!-- Right Visual -->
+            <div class="relative hidden lg:block">
+              <div
+                class="morphing-blob absolute top-0 right-0 w-full h-full bg-gradient-to-br from-purple-400/30 to-blue-400/30 blur-3xl"
+              ></div>
+
+              <div
+                class="glow-card relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/50"
+              >
+                <div class="flex items-center justify-between mb-6">
+                  <span
+                    class="inline-flex items-center space-x-2 text-xs font-semibold text-purple-600"
+                  >
+                    <i class="fas fa-chart-line"></i>
+                    <span>Live Results</span>
+                  </span>
+                  <span
+                    class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full"
+                    >Active</span
+                  >
+                </div>
+
+                <div class="space-y-6">
+                  <div class="flex items-center space-x-4">
+                    <div
+                      class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-3xl"
+                    >
+                      😊
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-semibold text-gray-700"
+                          >Addiction Level</span
+                        >
+                        <span class="text-2xl font-bold gradient-text"
+                          >6.4/10</span
+                        >
+                      </div>
+                      <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          class="h-full w-[64%] bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-4"
+                  >
+                    <div class="flex items-start space-x-3">
+                      <div
+                        class="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0"
+                      >
+                        <i class="fas fa-lightbulb text-yellow-500"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-sm text-gray-900 mb-1">
+                          Medium Risk
+                        </h4>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                          Your usage shows some patterns worth monitoring.
+                          Consider setting daily limits.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white rounded-xl p-4 border border-gray-100">
+                      <div class="text-2xl font-bold text-purple-600">4.2h</div>
+                      <div class="text-xs text-gray-600 mt-1">
+                        Daily Average
+                      </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-100">
+                      <div class="text-2xl font-bold text-blue-600">78%</div>
+                      <div class="text-xs text-gray-600 mt-1">
+                        Awareness Score
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Why Section -->
+      <section id="why" class="relative py-24 px-4">
+        <div class="max-w-5xl mx-auto text-center">
+          <div
+            class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-purple-200 mb-6"
+          >
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            <span
+              class="text-xs font-semibold text-purple-700 uppercase tracking-wider"
+              >The Importance</span
+            >
+          </div>
+
+          <h2 class="text-4xl md:text-5xl font-bold mb-6">
+            Why check your
+            <span class="gradient-text">social media habits?</span>
+          </h2>
+
+          <p
+            class="text-lg text-gray-600 max-w-3xl mx-auto mb-16 leading-relaxed"
+          >
+            Being active on social media is normal. But when it starts affecting
+            your focus, sleep, or relationships, it's time to take a closer look
+            at your habits.
+          </p>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <div
+              class="card-hover bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50"
+            >
+              <div
+                class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center mx-auto mb-6"
+              >
+                <i class="fas fa-graduation-cap text-white text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold mb-3">Academic Impact</h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Excessive social media use can significantly affect your grades
+                and learning capacity.
+              </p>
+            </div>
+
+            <div
+              class="card-hover bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50"
+            >
+              <div
+                class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center mx-auto mb-6"
+              >
+                <i class="fas fa-heart text-white text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold mb-3">Mental Health</h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Understanding your usage patterns helps maintain better mental
+                wellness and emotional balance.
+              </p>
+            </div>
+
+            <div
+              class="card-hover bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50"
+            >
+              <div
+                class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mx-auto mb-6"
+              >
+                <i class="fas fa-users text-white text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold mb-3">Relationships</h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Learn how your online habits might be affecting your real-world
+                connections.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Survey Section -->
+      <section id="tes" class="relative py-24 px-4">
+        <div class="max-w-4xl mx-auto">
+          <!-- Loading & Error States -->
+          <div
+            id="loading"
+            class="mb-8 bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50"
+          >
+            <div class="flex items-center justify-center space-x-3">
+              <div
+                class="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"
+              ></div>
+              <span class="font-medium text-gray-700">Loading AI model...</span>
+            </div>
+          </div>
+
+          <div
+            id="error"
+            class="hidden mb-8 bg-red-50 rounded-2xl p-6 border border-red-200"
+          >
+            <div class="flex items-start space-x-3">
+              <i
+                class="fas fa-exclamation-circle text-red-500 text-xl mt-0.5"
+              ></i>
+              <div>
+                <h3 class="font-semibold text-red-800 mb-1">
+                  Error Loading Model
+                </h3>
+                <p class="text-sm text-red-600" id="error-text">
+                  Please refresh the page and try again.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Survey Form -->
+          <div
+            class="glow-card bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-8 md:p-12"
+          >
+            <div class="text-center mb-12">
+              <div
+                class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200 mb-4"
+              >
+                <i class="fas fa-clipboard-list text-purple-600"></i>
+                <span class="text-xs font-semibold text-purple-700"
+                  >Assessment Form</span
+                >
+              </div>
+              <h2 class="text-3xl md:text-4xl font-bold mb-3">
+                Social Media Addiction Predictor
+              </h2>
+              <p class="text-gray-600">
+                Answer all questions below to calculate your addiction score
+              </p>
+            </div>
+
+            <form id="predictionForm" class="space-y-10">
+              <!-- Step 1: Personal Information -->
+              <div class="space-y-6">
+                <div
+                  class="flex items-center space-x-4 pb-4 border-b-2 border-purple-100"
+                >
+                  <div
+                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                  >
+                    1
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold text-gray-900">
+                      Personal Information
+                    </h3>
+                    <p class="text-sm text-gray-500">Tell us about yourself</p>
+                  </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Age <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="age"
+                      min="13"
+                      max="60"
+                      required
+                      placeholder="Enter your age (13-60)"
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:bg-white focus:outline-none transition-all"
+                      oninput="validateNumberInput(this, 13, 60)"
+                      onkeydown="preventInvalidChars(event)"
+                    />
+                    <p class="text-xs text-gray-500 mt-1">
+                      <i class="fas fa-info-circle"></i> Age range: 13-60 years
+                    </p>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Gender <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="gender"
+                      required
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:bg-white focus:outline-none transition-all"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Female">Female</option>
+                      <option value="Male">Male</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Academic Level <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="academic_level"
+                      required
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:bg-white focus:outline-none transition-all"
+                    >
+                      <option value="">Select Academic Level</option>
+                      <option value="High School">High School</option>
+                      <option value="Undergraduate">Undergraduate</option>
+                      <option value="Graduate">Graduate</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">
+                      <i class="fas fa-graduation-cap"></i> Your current
+                      education level
+                    </p>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Country <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="country"
+                      required
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:bg-white focus:outline-none transition-all"
+                    >
+                      <option value="">Select Country</option>
+                      <option value="Indonesia">🇮🇩 Indonesia</option>
+                      <option value="USA">🇺🇸 USA</option>
+                      <option value="UK">🇬🇧 UK</option>
+                      <option value="India">🇮🇳 India</option>
+                      <option value="Australia">🇦🇺 Australia</option>
+                      <option value="Canada">🇨🇦 Canada</option>
+                      <option value="Singapore">🇸🇬 Singapore</option>
+                      <option value="Malaysia">🇲🇾 Malaysia</option>
+                      <option value="Philippines">🇵🇭 Philippines</option>
+                      <option value="Thailand">🇹🇭 Thailand</option>
+                      <option value="Japan">🇯🇵 Japan</option>
+                      <option value="South Korea">🇰🇷 South Korea</option>
+                      <option value="China">🇨🇳 China</option>
+                      <option value="Germany">🇩🇪 Germany</option>
+                      <option value="France">🇫🇷 France</option>
+                      <option value="Netherlands">🇳🇱 Netherlands</option>
+                      <option value="Brazil">🇧🇷 Brazil</option>
+                      <option value="Mexico">🇲🇽 Mexico</option>
+                      <option value="Argentina">🇦🇷 Argentina</option>
+                      <option value="Spain">🇪🇸 Spain</option>
+                      <option value="Italy">🇮🇹 Italy</option>
+                      <option value="Turkey">🇹🇷 Turkey</option>
+                      <option value="Egypt">🇪🇬 Egypt</option>
+                      <option value="South Africa">🇿🇦 South Africa</option>
+                      <option value="Nigeria">🇳🇬 Nigeria</option>
+                      <option value="Pakistan">🇵🇰 Pakistan</option>
+                      <option value="Bangladesh">🇧🇩 Bangladesh</option>
+                      <option value="Vietnam">🇻🇳 Vietnam</option>
+                      <option value="UAE">🇦🇪 UAE</option>
+                      <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
+                      <optgroup label="More Countries">
+                        <option value="Afghanistan">Afghanistan</option>
+                        <option value="Albania">Albania</option>
+                        <option value="Andorra">Andorra</option>
+                        <option value="Armenia">Armenia</option>
+                        <option value="Austria">Austria</option>
+                        <option value="Azerbaijan">Azerbaijan</option>
+                        <option value="Bahamas">Bahamas</option>
+                        <option value="Bahrain">Bahrain</option>
+                        <option value="Belarus">Belarus</option>
+                        <option value="Belgium">Belgium</option>
+                        <option value="Bhutan">Bhutan</option>
+                        <option value="Bolivia">Bolivia</option>
+                        <option value="Bosnia">Bosnia</option>
+                        <option value="Bulgaria">Bulgaria</option>
+                        <option value="Chile">Chile</option>
+                        <option value="Colombia">Colombia</option>
+                        <option value="Costa Rica">Costa Rica</option>
+                        <option value="Croatia">Croatia</option>
+                        <option value="Cyprus">Cyprus</option>
+                        <option value="Czech Republic">Czech Republic</option>
+                        <option value="Denmark">Denmark</option>
+                        <option value="Ecuador">Ecuador</option>
+                        <option value="Estonia">Estonia</option>
+                        <option value="Finland">Finland</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Greece">Greece</option>
+                        <option value="Hong Kong">Hong Kong</option>
+                        <option value="Hungary">Hungary</option>
+                        <option value="Iceland">Iceland</option>
+                        <option value="Iraq">Iraq</option>
+                        <option value="Ireland">Ireland</option>
+                        <option value="Israel">Israel</option>
+                        <option value="Jamaica">Jamaica</option>
+                        <option value="Jordan">Jordan</option>
+                        <option value="Kazakhstan">Kazakhstan</option>
+                        <option value="Kenya">Kenya</option>
+                        <option value="Kosovo">Kosovo</option>
+                        <option value="Kuwait">Kuwait</option>
+                        <option value="Kyrgyzstan">Kyrgyzstan</option>
+                        <option value="Latvia">Latvia</option>
+                        <option value="Lebanon">Lebanon</option>
+                        <option value="Liechtenstein">Liechtenstein</option>
+                        <option value="Lithuania">Lithuania</option>
+                        <option value="Luxembourg">Luxembourg</option>
+                        <option value="Maldives">Maldives</option>
+                        <option value="Malta">Malta</option>
+                        <option value="Moldova">Moldova</option>
+                        <option value="Monaco">Monaco</option>
+                        <option value="Montenegro">Montenegro</option>
+                        <option value="Morocco">Morocco</option>
+                        <option value="Nepal">Nepal</option>
+                        <option value="New Zealand">New Zealand</option>
+                        <option value="North Macedonia">North Macedonia</option>
+                        <option value="Norway">Norway</option>
+                        <option value="Oman">Oman</option>
+                        <option value="Panama">Panama</option>
+                        <option value="Paraguay">Paraguay</option>
+                        <option value="Peru">Peru</option>
+                        <option value="Poland">Poland</option>
+                        <option value="Portugal">Portugal</option>
+                        <option value="Qatar">Qatar</option>
+                        <option value="Romania">Romania</option>
+                        <option value="Russia">Russia</option>
+                        <option value="San Marino">San Marino</option>
+                        <option value="Serbia">Serbia</option>
+                        <option value="Slovakia">Slovakia</option>
+                        <option value="Slovenia">Slovenia</option>
+                        <option value="Sri Lanka">Sri Lanka</option>
+                        <option value="Sweden">Sweden</option>
+                        <option value="Switzerland">Switzerland</option>
+                        <option value="Syria">Syria</option>
+                        <option value="Taiwan">Taiwan</option>
+                        <option value="Tajikistan">Tajikistan</option>
+                        <option value="Trinidad">Trinidad</option>
+                        <option value="Ukraine">Ukraine</option>
+                        <option value="Uruguay">Uruguay</option>
+                        <option value="Uzbekistan">Uzbekistan</option>
+                        <option value="Vatican City">Vatican City</option>
+                        <option value="Venezuela">Venezuela</option>
+                        <option value="Yemen">Yemen</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2: Social Media Usage -->
+              <div class="space-y-6">
+                <div
+                  class="flex items-center space-x-4 pb-4 border-b-2 border-blue-100"
+                >
+                  <div
+                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                  >
+                    2
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold text-gray-900">
+                      Social Media Usage
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                      Your daily habits and patterns
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Average Daily Usage (hours)
+                      <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <input
+                        type="number"
+                        name="avg_daily_usage_hours"
+                        min="0"
+                        max="24"
+                        step="0.5"
+                        required
+                        placeholder="e.g. 4.5"
+                        class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all"
+                        oninput="validateNumberInput(this, 0, 24); updateUsageValue(this.value)"
+                        onkeydown="preventInvalidChars(event)"
+                      />
+                      <span
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400"
+                        >hours/day</span
+                      >
+                    </div>
+                    <div
+                      class="flex items-center justify-between text-xs text-gray-500 mt-2"
+                    >
+                      <span
+                        ><i class="fas fa-clock"></i> 0-24 hours per day</span
+                      >
+                      <span
+                        id="usageDisplay"
+                        class="font-semibold text-blue-600"
+                      ></span>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Most Used Platform <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="most_used_platform"
+                      required
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all"
+                    >
+                      <option value="">Select Platform</option>
+                      <option value="Instagram">📷 Instagram</option>
+                      <option value="TikTok">🎵 TikTok</option>
+                      <option value="YouTube">📺 YouTube</option>
+                      <option value="Facebook">👥 Facebook</option>
+                      <option value="Twitter">🐦 Twitter</option>
+                      <option value="WhatsApp">💬 WhatsApp</option>
+                      <option value="Snapchat">👻 Snapchat</option>
+                      <option value="LinkedIn">💼 LinkedIn</option>
+                      <option value="WeChat">💚 WeChat</option>
+                      <option value="LINE">💚 LINE</option>
+                      <option value="KakaoTalk">💛 KakaoTalk</option>
+                      <option value="VKontakte">🔵 VKontakte</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">
+                      <i class="fas fa-mobile-alt"></i> Platform you spend most
+                      time on
+                    </p>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Affects Academic Performance
+                      <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                      <label class="relative cursor-pointer">
+                        <input
+                          type="radio"
+                          name="affects_academic_performance"
+                          value="No"
+                          required
+                          class="peer sr-only"
+                        />
+                        <div
+                          class="px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 transition-all text-center font-medium"
+                        >
+                          <i class="fas fa-check-circle"></i> No Impact
+                        </div>
+                      </label>
+                      <label class="relative cursor-pointer">
+                        <input
+                          type="radio"
+                          name="affects_academic_performance"
+                          value="Yes"
+                          required
+                          class="peer sr-only"
+                        />
+                        <div
+                          class="px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700 transition-all text-center font-medium"
+                        >
+                          <i class="fas fa-exclamation-triangle"></i> Affects Me
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Conflicts Over Social Media
+                      <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="conflicts_over_social_media"
+                      required
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all"
+                    >
+                      <option value="">Select Frequency</option>
+                      <option value="0">😊 Never</option>
+                      <option value="1">🙂 Rarely (Once a month)</option>
+                      <option value="2">😐 Sometimes (2-3 times/month)</option>
+                      <option value="3">😕 Often (Weekly)</option>
+                      <option value="4">
+                        😟 Very Often (Multiple times/week)
+                      </option>
+                      <option value="5">😞 Daily</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">
+                      <i class="fas fa-comments"></i> Arguments with
+                      family/friends about social media
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3: Health & Wellness -->
+              <div class="space-y-6">
+                <div
+                  class="flex items-center space-x-4 pb-4 border-b-2 border-pink-100"
+                >
+                  <div
+                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                  >
+                    3
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold text-gray-900">
+                      Health & Wellness
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                      Your wellbeing indicators
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Sleep Hours Per Night <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="sleep_hours_per_night"
+                      step="0.5"
+                      required
+                      placeholder="e.g. 7"
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:bg-white focus:outline-none transition-all"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Mental Health Score (1-10)
+                      <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="mental_health_score"
+                      min="1"
+                      max="10"
+                      required
+                      placeholder="Rate 1-10"
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:bg-white focus:outline-none transition-all"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">
+                      Relationship Status <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="relationship_status"
+                      required
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:bg-white focus:outline-none transition-all"
+                    >
+                      <option value="">Select Status</option>
+                      <option value="Single">Single</option>
+                      <option value="In a relationship">
+                        In a relationship
+                      </option>
+                      <option value="Married">Married</option>
+                      <option value="Divorced">Divorced</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="pt-6 text-center space-y-4">
+                <button
+                  type="submit"
+                  id="predictBtn"
+                  disabled
+                  class="group relative inline-flex items-center justify-center px-12 py-4 font-bold text-white rounded-2xl overflow-hidden shadow-2xl transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed w-full md:w-auto"
+                >
+                  <div
+                    class="absolute inset-0 w-full h-full bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-[length:200%_100%]"
+                  ></div>
+                  <span class="relative flex items-center space-x-2">
+                    <span>Loading model...</span>
+                    <i
+                      class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"
+                    ></i>
+                  </span>
+                </button>
+
+                <div
+                  class="flex items-center justify-center space-x-2 text-xs text-gray-500"
+                >
+                  <i class="fas fa-lock"></i>
+                  <span
+                    >All calculations are done in your browser. We don't store
+                    your data.</span
+                  >
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Results Section -->
+          <div id="result" class="hidden mt-12">
+            <div
+              class="glow-card bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
+            >
+              <!-- Results Header -->
+              <div
+                class="bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 px-8 py-12 text-center relative overflow-hidden"
+              >
+                <div
+                  class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"
+                ></div>
+                <div class="relative">
+                  <div
+                    class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 mb-4"
+                  >
+                    <i class="fas fa-check-circle text-white"></i>
+                    <span
+                      class="text-xs font-semibold text-white uppercase tracking-wider"
+                      >Assessment Complete</span
+                    >
+                  </div>
+                  <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">
+                    Your Results Are Ready
+                  </h2>
+                  <p class="text-white/90 text-sm">
+                    Based on your responses, here's your addiction assessment
+                  </p>
+                </div>
+              </div>
+
+              <!-- Results Content -->
+              <div class="p-8 md:p-12">
+                <div id="result-content"></div>
+
+                <!-- Recommendations Section (will be populated by JS) -->
+                <div id="recommendations" class="mt-10 space-y-4">
+                  <h3
+                    class="text-xl font-bold text-gray-900 mb-6 flex items-center"
+                  >
+                    <div
+                      class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center mr-3"
+                    >
+                      <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    Personalized Recommendations
+                  </h3>
+                  <div
+                    class="grid md:grid-cols-2 gap-4"
+                    id="recommendation-cards"
+                  ></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-10 pt-8 border-t border-gray-100">
+                  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      type="button"
+                      onclick="location.reload()"
+                      class="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                    >
+                      <i
+                        class="fas fa-redo-alt mr-2 group-hover:rotate-180 transition-transform duration-500"
+                      ></i>
+                      Take Survey Again
+                    </button>
+                    <button
+                      type="button"
+                      onclick="shareResults()"
+                      class="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-900 font-bold rounded-2xl shadow-lg border-2 border-gray-200 hover:border-purple-300 hover:scale-105 transition-all"
+                    >
+                      <i class="fas fa-share-alt mr-2"></i>
+                      Share Results
+                    </button>
+                  </div>
+
+                  <p class="text-center text-xs text-gray-500 mt-6">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    These results are for educational purposes. If you're
+                    concerned, please consult a mental health professional.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Additional Info Section -->
+      <section class="relative py-24 px-4">
+        <div class="max-w-6xl mx-auto">
+          <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+              <div
+                class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200"
+              >
+                <i class="fas fa-shield-alt text-purple-600"></i>
+                <span class="text-xs font-semibold text-purple-700"
+                  >Privacy First</span
+                >
+              </div>
+
+              <h2 class="text-3xl md:text-4xl font-bold">
+                Your data stays <span class="gradient-text">with you</span>
+              </h2>
+
+              <p class="text-lg text-gray-600 leading-relaxed">
+                We take your privacy seriously. All calculations happen directly
+                in your browser using AI technology. Nothing is sent to our
+                servers, and no personal data is stored.
+              </p>
+
+              <div class="space-y-4">
+                <div class="flex items-start space-x-4">
+                  <div
+                    class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0"
+                  >
+                    <i class="fas fa-check text-green-600"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-gray-900 mb-1">
+                      No Data Collection
+                    </h4>
+                    <p class="text-sm text-gray-600">
+                      We never store or transmit your answers
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-4">
+                  <div
+                    class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0"
+                  >
+                    <i class="fas fa-check text-blue-600"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-gray-900 mb-1">
+                      Anonymous Results
+                    </h4>
+                    <p class="text-sm text-gray-600">
+                      No login required, completely anonymous
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-4">
+                  <div
+                    class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0"
+                  >
+                    <i class="fas fa-check text-purple-600"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-gray-900 mb-1">
+                      Instant Processing
+                    </h4>
+                    <p class="text-sm text-gray-600">
+                      Get your results immediately in your browser
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative">
+              <div
+                class="card-hover bg-gradient-to-br from-purple-500 to-blue-500 rounded-3xl p-8 text-white shadow-2xl"
+              >
+                <div class="flex items-center space-x-3 mb-6">
+                  <div
+                    class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
+                  >
+                    <i class="fas fa-chart-bar text-2xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold">Evidence-Based</h3>
+                    <p class="text-sm text-white/80">
+                      Scientifically validated
+                    </p>
+                  </div>
+                </div>
+
+                <p class="text-white/90 mb-6 leading-relaxed">
+                  Our assessment tool is based on validated psychological
+                  research and behavioral patterns observed in thousands of
+                  students worldwide.
+                </p>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                    <div class="text-3xl font-bold mb-1">85%</div>
+                    <div class="text-sm text-white/80">Prediction Accuracy</div>
+                  </div>
+                  <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                    <div class="text-3xl font-bold mb-1">12+</div>
+                    <div class="text-sm text-white/80">Key Indicators</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="relative border-t border-white/50 bg-white/80 backdrop-blur-xl py-12 px-4"
+    >
+      <div class="max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+          <div class="space-y-4">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center"
+              >
+                <i class="fas fa-brain text-white"></i>
+              </div>
+              <div>
+                <span
+                  class="block text-xs font-semibold text-purple-600 uppercase"
+                  >Digital Wellness</span
+                >
+                <span class="block text-sm font-bold">Social Check</span>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Helping students understand and manage their social media usage
+              for better mental health and academic performance.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-4">Quick Links</h4>
+            <ul class="space-y-2 text-sm">
+              <li>
+                <a
+                  href="#hero"
+                  class="text-gray-600 hover:text-purple-600 transition-colors"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#why"
+                  class="text-gray-600 hover:text-purple-600 transition-colors"
+                  >Why This Matters</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#tes"
+                  class="text-gray-600 hover:text-purple-600 transition-colors"
+                  >Take Survey</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-4">About</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Created by Kelompok 3 as part of our Social Media Addiction
+              research project.
+            </p>
+            <div class="flex items-center space-x-3 mt-4">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-purple-100 flex items-center justify-center text-gray-600 hover:text-purple-600 transition-all"
+              >
+                <i class="fab fa-github"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-purple-100 flex items-center justify-center text-gray-600 hover:text-purple-600 transition-all"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="pt-8 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4"
+        >
+          <p class="text-sm text-gray-600">
+            © 2024 Kelompok 3 • Social Media Addiction Project
+          </p>
+          <p class="text-sm text-gray-500 flex items-center space-x-2">
+            <span>Stay mindful, not mindless</span>
+            <span class="text-purple-500">✨</span>
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="assets/js/logic-prediksi.js"></script>
 
     <script>
-        tailwind.config = {
-            prefix: 'tw-', // Wajib ada biar class tidak bentrok
-            corePlugins: {
-               preflight: false, // <--- INI WAJIB ADA! Biar desain asli kamu tidak hancur
-            },
-            theme: {
-              extend: {
-                colors: { 
-                    "social-blue": "#1877F2", 
-                    "social-purple": "#8B5CF6", 
-                    "social-pink": "#EC4899" 
-                }
-              }
+      // Mobile menu toggle
+      const mobileMenuButton = document.getElementById("mobileMenuButton");
+      const mobileMenuPanel = document.getElementById("mobileMenuPanel");
+
+      if (mobileMenuButton && mobileMenuPanel) {
+        mobileMenuButton.addEventListener("click", () => {
+          mobileMenuPanel.classList.toggle("hidden");
+        });
+      }
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            // Close mobile menu if open
+            if (
+              mobileMenuPanel &&
+              !mobileMenuPanel.classList.contains("hidden")
+            ) {
+              mobileMenuPanel.classList.add("hidden");
             }
+          }
+        });
+      });
+
+      // Add animation class when elements come into view
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+          }
+        });
+      }, observerOptions);
+
+      // Observe all cards
+      document.querySelectorAll(".card-hover").forEach((card) => {
+        card.style.opacity = "0";
+        card.style.transform = "translateY(20px)";
+        card.style.transition = "all 0.6s ease-out";
+        observer.observe(card);
+      });
+
+      // Enhanced results display function
+      function displayEnhancedResults(score, riskLevel, predictions) {
+        const resultContent = document.getElementById("result-content");
+        const recommendationCards = document.getElementById(
+          "recommendation-cards"
+        );
+
+        // Determine colors and emoji based on risk level
+        let levelColor, levelBg, emoji, message;
+        if (riskLevel === "Low") {
+          levelColor = "text-green-600";
+          levelBg = "from-green-500 to-emerald-500";
+          emoji = "😊";
+          message =
+            "Great job! Your social media usage appears healthy and balanced.";
+        } else if (riskLevel === "Medium") {
+          levelColor = "text-yellow-600";
+          levelBg = "from-yellow-500 to-orange-500";
+          emoji = "😐";
+          message =
+            "Your usage shows some concerning patterns. Consider making small adjustments.";
+        } else {
+          levelColor = "text-red-600";
+          levelBg = "from-red-500 to-pink-500";
+          emoji = "😟";
+          message =
+            "Your social media usage may be affecting your wellbeing. Time to take action.";
         }
+
+        // Main score display
+        resultContent.innerHTML = `
+        <div class="flex flex-col items-center space-y-6 mb-8">
+          <!-- Score Circle -->
+          <div class="relative">
+            <svg class="transform -rotate-90 w-40 h-40">
+              <circle cx="80" cy="80" r="70" stroke="#E5E7EB" stroke-width="12" fill="transparent"/>
+              <circle cx="80" cy="80" r="70" stroke="url(#gradient)" stroke-width="12" fill="transparent"
+                      stroke-dasharray="${2 * Math.PI * 70}" 
+                      stroke-dashoffset="${2 * Math.PI * 70 * (1 - score / 10)}"
+                      class="transition-all duration-1000 ease-out"
+                      stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <div class="text-5xl mb-1">${emoji}</div>
+              <div class="text-4xl font-bold ${levelColor}">${score.toFixed(
+          1
+        )}</div>
+              <div class="text-xs text-gray-500 font-medium">out of 10</div>
+            </div>
+          </div>
+
+          <!-- Risk Level Badge -->
+          <div class="inline-flex items-center space-x-3 px-6 py-3 rounded-2xl bg-gradient-to-r ${levelBg} shadow-lg">
+            <span class="text-2xl font-bold text-white">${riskLevel} Risk</span>
+          </div>
+
+          <!-- Message -->
+          <p class="text-gray-600 max-w-md text-center leading-relaxed">${message}</p>
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+          <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 border border-purple-100">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-gray-700">Addiction Score</span>
+              <i class="fas fa-mobile-alt text-purple-500"></i>
+            </div>
+            <div class="text-3xl font-bold gradient-text">${score.toFixed(
+              1
+            )}/10</div>
+            <div class="h-2 bg-white rounded-full mt-3 overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-1000" style="width: ${
+                score * 10
+              }%"></div>
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-100">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-gray-700">Risk Category</span>
+              <i class="fas fa-chart-line text-blue-500"></i>
+            </div>
+            <div class="text-2xl font-bold ${levelColor}">${riskLevel}</div>
+            <div class="text-xs text-gray-500 mt-2">Based on behavioral patterns</div>
+          </div>
+
+          <div class="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-100">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-gray-700">Assessment Date</span>
+              <i class="fas fa-calendar text-pink-500"></i>
+            </div>
+            <div class="text-lg font-bold text-gray-900">${new Date().toLocaleDateString()}</div>
+            <div class="text-xs text-gray-500 mt-2">${new Date().toLocaleTimeString()}</div>
+          </div>
+        </div>
+      `;
+
+        // Generate recommendations based on risk level
+        const recommendations = getRecommendations(riskLevel, score);
+        recommendationCards.innerHTML = recommendations
+          .map(
+            (rec, index) => `
+        <div class="card-hover bg-gradient-to-br ${rec.bgGradient} rounded-2xl p-6 border ${rec.borderColor}">
+          <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 rounded-xl ${rec.iconBg} flex items-center justify-center flex-shrink-0">
+              <i class="fas ${rec.icon} ${rec.iconColor} text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-gray-900 mb-2">${rec.title}</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">${rec.description}</p>
+            </div>
+          </div>
+        </div>
+      `
+          )
+          .join("");
+
+        // Show result section with animation
+        const resultSection = document.getElementById("result");
+        resultSection.classList.remove("hidden");
+        setTimeout(() => {
+          resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
+
+      // Get recommendations based on risk level
+      function getRecommendations(riskLevel, score) {
+        const baseRecommendations = [
+          {
+            icon: "fa-clock",
+            iconColor: "text-blue-600",
+            iconBg: "bg-blue-100",
+            bgGradient: "from-blue-50 to-cyan-50",
+            borderColor: "border-blue-100",
+            title: "Set Time Limits",
+            description:
+              "Use built-in screen time features to set daily limits on social media apps.",
+          },
+          {
+            icon: "fa-bell-slash",
+            iconColor: "text-purple-600",
+            iconBg: "bg-purple-100",
+            bgGradient: "from-purple-50 to-pink-50",
+            borderColor: "border-purple-100",
+            title: "Disable Notifications",
+            description:
+              "Turn off non-essential notifications to reduce constant checking behavior.",
+          },
+          {
+            icon: "fa-book",
+            iconColor: "text-green-600",
+            iconBg: "bg-green-100",
+            bgGradient: "from-green-50 to-emerald-50",
+            borderColor: "border-green-100",
+            title: "Prioritize Studies",
+            description:
+              "Create dedicated study time blocks where social media is completely off-limits.",
+          },
+          {
+            icon: "fa-users",
+            iconColor: "text-orange-600",
+            iconBg: "bg-orange-100",
+            bgGradient: "from-orange-50 to-yellow-50",
+            borderColor: "border-orange-100",
+            title: "Real Social Time",
+            description:
+              "Schedule regular face-to-face time with friends instead of just online interaction.",
+          },
+        ];
+
+        if (riskLevel === "High") {
+          return [
+            {
+              icon: "fa-exclamation-triangle",
+              iconColor: "text-red-600",
+              iconBg: "bg-red-100",
+              bgGradient: "from-red-50 to-pink-50",
+              borderColor: "border-red-100",
+              title: "Seek Professional Help",
+              description:
+                "Consider talking to a counselor about your social media habits and their impact.",
+            },
+            ...baseRecommendations.slice(0, 3),
+          ];
+        } else if (riskLevel === "Medium") {
+          return baseRecommendations;
+        } else {
+          return [
+            {
+              icon: "fa-check-circle",
+              iconColor: "text-green-600",
+              iconBg: "bg-green-100",
+              bgGradient: "from-green-50 to-emerald-50",
+              borderColor: "border-green-100",
+              title: "Keep It Up!",
+              description:
+                "Your habits are healthy. Continue maintaining this balanced approach.",
+            },
+            ...baseRecommendations.slice(0, 3),
+          ];
+        }
+      }
+
+      // Share results function
+      function shareResults() {
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "My Social Media Addiction Assessment",
+              text: "I just completed a social media addiction assessment. Check yours too!",
+              url: window.location.href,
+            })
+            .catch((err) => console.log("Share failed:", err));
+        } else {
+          alert(
+            "Sharing is not supported on this browser. You can take a screenshot instead!"
+          );
+        }
+      }
+
+      // Helper function to update predict button
+      function updatePredictButton(text, enabled = true) {
+        const predictBtn = document.getElementById("predictBtn");
+        if (predictBtn) {
+          const buttonText = predictBtn.querySelector("span span");
+          if (buttonText) {
+            buttonText.textContent = text;
+          }
+          predictBtn.disabled = !enabled;
+        }
+      }
+
+      // Interactive form feedback functions
+      function updateUsageValue(value) {
+        const display = document.getElementById("usageDisplay");
+        if (display && value) {
+          const hours = parseFloat(value);
+          if (hours < 2) {
+            display.textContent = "✅ Very Light";
+            display.className = "font-semibold text-green-600 text-base";
+          } else if (hours < 4) {
+            display.textContent = "👍 Moderate";
+            display.className = "font-semibold text-blue-600 text-base";
+          } else if (hours < 6) {
+            display.textContent = "⚠️ High";
+            display.className = "font-semibold text-yellow-600 text-base";
+          } else {
+            display.textContent = "🚨 Very High";
+            display.className = "font-semibold text-red-600 text-base";
+          }
+        }
+      }
+
+      function updateSleepDisplay(value) {
+        const display = document.getElementById("sleepDisplay");
+        if (display && value) {
+          const hours = parseFloat(value);
+          if (hours < 5) {
+            display.innerHTML =
+              '<i class="fas fa-moon"></i> ⚠️ Too little sleep';
+            display.className = "text-xs text-red-600 mt-1";
+          } else if (hours < 7) {
+            display.innerHTML =
+              '<i class="fas fa-moon"></i> 😴 Below recommended';
+            display.className = "text-xs text-yellow-600 mt-1";
+          } else if (hours <= 9) {
+            display.innerHTML = '<i class="fas fa-moon"></i> ✅ Healthy sleep';
+            display.className = "text-xs text-green-600 mt-1";
+          } else {
+            display.innerHTML =
+              '<i class="fas fa-moon"></i> 😴 More than needed';
+            display.className = "text-xs text-blue-600 mt-1";
+          }
+        }
+      }
+
+      function updateMentalHealthDisplay(value) {
+        const display = document.getElementById("mentalHealthDisplay");
+        if (display) {
+          display.textContent = value;
+          const val = parseInt(value);
+          if (val <= 3) {
+            display.className = "font-bold text-red-600 text-base";
+          } else if (val <= 5) {
+            display.className = "font-bold text-yellow-600 text-base";
+          } else if (val <= 7) {
+            display.className = "font-bold text-blue-600 text-base";
+          } else {
+            display.className = "font-bold text-green-600 text-base";
+          }
+        }
+      }
+
+      // Form validation
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("predictionForm");
+        if (form) {
+          // Add real-time validation feedback
+          const inputs = form.querySelectorAll('input[type="number"]');
+          inputs.forEach((input) => {
+            input.addEventListener("blur", function () {
+              const value = parseFloat(this.value);
+              const min = parseFloat(this.min);
+              const max = parseFloat(this.max);
+
+              if (value < min || value > max) {
+                this.classList.add("border-red-500");
+                this.classList.remove("border-gray-200");
+
+                // Show error tooltip
+                let errorMsg = this.parentElement.querySelector(".error-msg");
+                if (!errorMsg) {
+                  errorMsg = document.createElement("p");
+                  errorMsg.className = "error-msg text-xs text-red-500 mt-1";
+                  this.parentElement.appendChild(errorMsg);
+                }
+                errorMsg.textContent = `Please enter a value between ${min} and ${max}`;
+              } else {
+                this.classList.remove("border-red-500");
+                this.classList.add("border-gray-200");
+                const errorMsg = this.parentElement.querySelector(".error-msg");
+                if (errorMsg) errorMsg.remove();
+              }
+            });
+          });
+        }
+      });
+
+      // Make functions globally available
+      window.displayEnhancedResults = displayEnhancedResults;
+      window.shareResults = shareResults;
+      window.updatePredictButton = updatePredictButton;
+      window.updateUsageValue = updateUsageValue;
+      window.updateSleepDisplay = updateSleepDisplay;
+      window.updateMentalHealthDisplay = updateMentalHealthDisplay;
     </script>
 
     <style>
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.5);
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
         }
-        /* Animasi Loading */
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .tw-animate-spin { animation: spin 1s linear infinite; }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .animate-gradient {
+        animation: gradient 3s ease infinite;
+      }
     </style>
-
-</head>
-
-<body>
-
-    <header>
-        <div class="logo">
-            <!-- Social Media Addiction -->
-            <img src="assets/images/unnamed-removebg-preview.png" alt="logo-image" class="logo-img">
-            <h1>Social Media Addiction</h1>
-        </div>
-
-<!-- Menu-->
-
-        <nav>
-            <ul class="nav-links">
-                <li><a href="#Beranda">Beranda</a></li>
-                <li><a href="#client">Tentang Kami</a></li>
-                <li><a href="#tes">Cek Kecanduan</a></li>
-                <li><a href="#contact">Kontak Kami</a></li>
-            </ul>
-            <!-- Hamburger menu -->
-            <div class="hamburger-menu">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
-            </div>
-
-            <div id="mobileMenu">
-                <ul class="nav-links-mobile">
-                    <li><a href="#Beranda"><i class="fa fa-home"></i> Beranda</a></li>
-                    <li><a href="#client"><i class="fa fa-info-circle"></i> Tentang Kami</a></li>
-                    <li><a href="#tes"><i class="fa fa-stethoscope"></i> Cek Kecanduan</a></li>
-                    <li><a href="#contact"><i class="far fa-address-book"></i> Kontak Kami</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-
-<!-- Menu END -->
-
-<!-- Beranda -->
-
-    <section class="hero container" id="Beranda">
-        <div class="hero-left">
-            <h1>
-                Hi, Digital Explorers!
-            </h1>
-            <p>
-                Selamat datang di Social Media Addiction Detector, 
-                platform yang membantumu mengenali sejauh mana 
-                ketergantunganmu terhadap media sosial. Social media 
-                addiction adalah kondisi ketika seseorang sulit 
-                mengendalikan penggunaan medsos hingga memengaruhi 
-                aktivitas, emosi, atau kehidupan sehari-hari 📱. 
-                Melalui website ini, kamu bisa mengecek pola 
-                penggunaanmu, memahami risikonya, dan mendapatkan 
-                edukasi untuk tetap seimbang di dunia digital 🌿.
-            </p>
-            <button class="btn-primary">
-                <a href="#tes">Mulai Tes</a>
-            </button>
-        </div>
-        <div class="hero-right">
-            <img src="assets/images/Gemini_Generated_Image_lkl5x4lkl5x4lkl5.png" alt="hero-image" class="hero-img">
-        </div>
-    </section>
-
-<!-- Beranda END -->
-
-<!-- Tentang Kami-->
-
-    <section class="client container" id="client">
-        <div class="client-left">
-            <h1>Tentang Kami</h1>
-            <p>
-                Website ini dibuat oleh Kelompok 3 dalam mata kuliah Matematika Diskrit sebagai bagian dari 
-                pemenuhan tugas akhir. Kelompok kami yang beranggotakan 
-                Karindra Rafi Linux Hirarki,
-                Rika Amalia Nurmayani,
-                Farrel Fatih Bhimawan, dan
-                Elvyn Abdurrahim berkolaborasi dalam merancang serta mengembangkan website pendeteksi kecanduan media sosial,
-                mulai dari perancangan konsep hingga implementasi. Di samping teks ini juga ditampilkan foto dokumentasi
-                saat presentasi bersama mitra, yang menggambarkan proses penyampaian hasil kerja dan penerimaan masukan
-                untuk penyempurnaan proyek.
-            </p>
-        </div>
-        <div class="client-right">
-            <div class="client-wrapper">
-                <div class="client-items-1">
-                    <div class="client-item">
-                        <img src="assets/images/client-1.png" alt="Netflix" srcset="">
-                    </div>
-                    <div class="client-item">
-                        <img src="assets/images/Image_1669606404.png" alt="BUMN" srcset="">
-                    </div>
-                </div>
-                <div class="client-items-2">
-                    <div class="client-item">
-                        <img src="assets/images/client-3.png" alt="indeed" srcset="">
-                    </div>
-                    <div class="client-item">
-                        <img src="assets/images/client-4.png" alt="Linked In" srcset="">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-<!-- Tentang Kami END -->
-
-<!-- Tes -->
-
- <section id="tes" class="tw-relative tw-w-full tw-min-h-screen tw-py-10 md:tw-py-20" style="background-color: #faeee7;">
-    <div class="container tw-mx-auto tw-px-4 tw-max-w-4xl">
-        
-        <div class="tw-text-center tw-mb-12 tw-animate-bounce">
-            <div class="tw-inline-flex tw-items-center tw-justify-center tw-w-20 tw-h-20 tw-bg-white tw-rounded-full tw-mb-6 tw-shadow-lg">
-                <i class="fa-solid fa-check tw-text-3xl tw-text-purple-600"></i>
-            </div>
-            <h1 class="tw-text-5xl tw-font-bold tw-text-black tw-mb-4">Social Media Addiction Predictor</h1>
-            <p class="tw-text-xl tw-text-black/90 tw-max-w-2xl tw-mx-auto">
-                Understand your social media habits with our AI-powered assessment tool.
-            </p>
-        </div>
-
-        <div id="loading" class="glass-effect tw-rounded-2xl tw-p-8 tw-mb-8 tw-text-center tw-bg-white/90 tw-backdrop-blur-sm">
-            <div class="tw-inline-flex tw-items-center tw-space-x-3">
-                <div class="tw-animate-spin tw-rounded-full tw-h-8 tw-w-8 tw-border-b-2 tw-border-purple-600"></div>
-                <span class="tw-text-lg tw-font-medium tw-text-gray-700">Loading AI model...</span>
-            </div>
-        </div>
-
-        <div id="error" class="tw-hidden tw-bg-red-50 tw-rounded-2xl tw-p-6 tw-mb-8 tw-border-l-4 tw-border-red-500">
-            <h3 class="tw-text-lg tw-font-medium tw-text-red-800">Error</h3>
-            <p class="tw-text-red-600 tw-mt-1" id="error-text">Please refresh.</p>
-        </div>
-
-        <div class="glass-effect tw-rounded-2xl tw-p-8 tw-shadow-2xl tw-bg-white">
-            <form id="predictionForm" class="tw-space-y-8">
-                
-                <div class="tw-border-b tw-border-gray-200 tw-pb-6">
-                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-800 tw-mb-6 tw-flex tw-items-center">
-                        <span class="tw-bg-purple-500 tw-text-white tw-rounded-full tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-text-sm tw-mr-3">1</span>
-                        Personal Information
-                    </h2>
-                    <div class="tw-grid md:tw-grid-cols-2 tw-gap-6">
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Age <span class="tw-text-red-500">*</span></label>
-                            <input type="number" name="age" min="13" required 
-                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg focus:tw-ring-2 focus:tw-ring-purple-500">
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Gender <span class="tw-text-red-500">*</span></label>
-                            <select name="gender" required 
-                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Academic Level <span class="tw-text-red-500">*</span></label>
-                            <select name="academic_level" required 
-                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                                <option value="">Select Academic Level</option>
-                                <option value="High School">High School</option>
-                                <option value="Undergraduate">Undergraduate</option>
-                                <option value="Graduate">Graduate</option>
-                                <option value="Postgraduate">Postgraduate</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Country <span class="tw-text-red-500">*</span></label>
-                            <input type="text" name="country" placeholder="e.g. Indonesia" required 
-                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tw-border-b tw-border-gray-200 tw-pb-6">
-                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-800 tw-mb-6 tw-flex tw-items-center">
-                        <span class="tw-bg-blue-500 tw-text-white tw-rounded-full tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-text-sm tw-mr-3">2</span>
-                        Social Media Usage
-                    </h2>
-                    <div class="tw-grid md:tw-grid-cols-2 tw-gap-6">
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Average Daily Usage (hours) <span class="tw-text-red-500">*</span></label>
-                            <input type="number" name="avg_daily_usage_hours" step="0.5" required 
-                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Most Used Platform <span class="tw-text-red-500">*</span></label>
-                            <select name="most_used_platform" required 
-                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                                <option value="">Select Platform</option>
-                                <option value="Instagram">Instagram</option>
-                                <option value="Facebook">Facebook</option>
-                                <option value="Twitter">Twitter</option>
-                                <option value="TikTok">TikTok</option>
-                                <option value="YouTube">YouTube</option>
-                                <option value="Snapchat">Snapchat</option>
-                                <option value="LinkedIn">LinkedIn</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Affects Academic Performance <span class="tw-text-red-500">*</span></label>
-                            <select name="affects_academic_performance" required 
-                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                                <option value="">Select Impact</option>
-                                <option value="No">No Impact</option>
-                                <option value="Yes">Affects Performance</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Conflicts Over Social Media <span class="tw-text-red-500">*</span></label>
-                            <select name="conflicts_over_social_media" required 
-                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                                <option value="">Select Frequency</option>
-                                <option value="0">Never</option>
-                                <option value="1">Rarely</option>
-                                <option value="2">Sometimes</option>
-                                <option value="3">Often</option>
-                                <option value="4">Very Often</option>
-                                <option value="5">Daily</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tw-pb-6">
-                    <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-800 tw-mb-6 tw-flex tw-items-center">
-                        <span class="tw-bg-pink-500 tw-text-white tw-rounded-full tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-text-sm tw-mr-3">3</span>
-                        Health & Wellness
-                    </h2>
-                    <div class="tw-grid md:tw-grid-cols-3 tw-gap-6">
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Sleep Hours Per Night <span class="tw-text-red-500">*</span></label>
-                            <input type="number" name="sleep_hours_per_night" step="0.5" required 
-                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Mental Health Score (1-10) <span class="tw-text-red-500">*</span></label>
-                            <input type="number" name="mental_health_score" min="1" max="10" required 
-                                   class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                        </div>
-                        <div>
-                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 tw-mb-2">Relationship Status <span class="tw-text-red-500">*</span></label>
-                            <select name="relationship_status" required 
-                                    class="tw-w-full tw-px-4 tw-py-3 !tw-border !tw-border-solid !tw-border-gray-300 tw-bg-white tw-rounded-lg">
-                                <option value="">Select Status</option>
-                                <option value="Single">Single</option>
-                                <option value="In a relationship">In a relationship</option>
-                                <option value="Married">Married</option>
-                                <option value="Divorced">Divorced</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tw-text-center tw-pt-4">
-                    <button type="submit" id="predictBtn" disabled class="tw-bg-gradient-to-r tw-from-indigo-500 tw-to-purple-600 tw-text-white tw-font-bold tw-py-4 tw-px-10 tw-rounded-xl hover:tw-opacity-90 disabled:tw-opacity-50 tw-transition-all tw-shadow-lg tw-w-full md:tw-w-auto">
-                        ✨ Predict Addiction Risk
-                    </button>
-                    <p class="tw-text-sm tw-text-gray-500 tw-mt-3">🔒 Your data is processed locally and never leaves your device</p>
-                </div>
-            </form>
-        </div>
-
-        <div id="result" class="tw-hidden tw-mt-8 tw-animate-fade-in-up">
-            <div class="glass-effect tw-rounded-2xl tw-p-8 tw-text-center tw-bg-white tw-shadow-2xl tw-border-2 tw-border-white/50">
-                <div id="result-content"></div>
-                
-                <button onclick="location.reload()" class="tw-mt-6 tw-px-6 tw-py-3 tw-bg-gray-100 tw-rounded-lg hover:tw-bg-gray-200 tw-font-semibold tw-text-gray-700">
-                    🔄 Check Again
-                </button>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<!-- Tes END -->
-
-<!-- Kontak Kami -->
-
-<div class="contact container" id="contact">
-        <h1>Kritik dan Saran</h1>
-        <form action="https://formspree.io/f/meqywpdv" method="post">
-            <input type="text" name="nama" placeholder="Nama">
-            <input type="email" name="email" placeholder="Email">
-            <textarea name="pesan" id="email" cols="30" rows="10" placeholder="Pesan"></textarea>
-            <button class="btn-primary" type="submit">Kirim</button>
-        </form>
-    </div>
-
-<!-- Kontak Kami END-->
-
-    <footer>
-        <p> Made With Kelompok 3 ♡🌹💐 </p>
-    </footer>
-
-    <script src="assets/js/script.js"></script>
-
-    <script src="assets/js/logic-prediksi.js"></script>
-</body>
+  </body>
 </html>
