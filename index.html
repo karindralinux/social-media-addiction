@@ -895,18 +895,38 @@
 
                   <div class="space-y-2">
                     <label class="block text-sm font-semibold text-gray-700">
-                      Mental Health Score (1-10)
+                      Mental Health Score
                       <span class="text-red-500">*</span>
                     </label>
-                    <input
-                      type="number"
+                    <select
                       name="mental_health_score"
-                      min="1"
-                      max="10"
                       required
-                      placeholder="Rate 1-10"
                       class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:bg-white focus:outline-none transition-all"
-                    />
+                      onchange="updateMentalHealthDisplay(this.value)"
+                    >
+                      <option value="">Select your mental health score</option>
+                      <option value="1">1 - 😔 Poor: Persistent mental health struggles</option>
+                      <option value="2">2 - 😟 Very Low: Major difficulties with wellbeing</option>
+                      <option value="3">3 - 😕 Low: Frequent mental health challenges</option>
+                      <option value="4">4 - 😐 Below Average: Some mental health concerns</option>
+                      <option value="5">5 - 😌 Average: Balanced with room for improvement</option>
+                      <option value="6">6 - 🙂 Good: Generally positive mental health</option>
+                      <option value="7">7 - 😊 Very Good: Strong mental health & coping</option>
+                      <option value="8">8 - 😄 Excellent: High mental wellbeing</option>
+                      <option value="9">9 - 🤩 Outstanding: Exceptional mental health</option>
+                      <option value="10">10 - ✨ Optimal: Peak mental wellness</option>
+                    </select>
+                    <div
+                      class="flex items-center justify-between text-xs text-gray-500 mt-2"
+                    >
+                      <span
+                        ><i class="fas fa-smile"></i> Rate your current mental wellbeing</span
+                      >
+                      <span
+                        id="mentalHealthDisplay"
+                        class="font-semibold text-pink-600"
+                      ></span>
+                    </div>
                   </div>
 
                   <div class="space-y-2">
@@ -1597,18 +1617,56 @@
 
       function updateMentalHealthDisplay(value) {
         const display = document.getElementById("mentalHealthDisplay");
-        if (display) {
-          display.textContent = value;
+        if (display && value) {
           const val = parseInt(value);
-          if (val <= 3) {
-            display.className = "font-bold text-red-600 text-base";
-          } else if (val <= 5) {
-            display.className = "font-bold text-yellow-600 text-base";
-          } else if (val <= 7) {
-            display.className = "font-bold text-blue-600 text-base";
+          let emoji, text, colorClass;
+
+          if (val <= 2) {
+            emoji = "😔";
+            text = "Needs Attention";
+            colorClass = "font-semibold text-red-600 text-base";
+          } else if (val === 3) {
+            emoji = "😟";
+            text = "Low";
+            colorClass = "font-semibold text-red-500 text-base";
+          } else if (val === 4) {
+            emoji = "😐";
+            text = "Below Average";
+            colorClass = "font-semibold text-yellow-600 text-base";
+          } else if (val === 5) {
+            emoji = "😌";
+            text = "Average";
+            colorClass = "font-semibold text-yellow-500 text-base";
+          } else if (val === 6) {
+            emoji = "🙂";
+            text = "Good";
+            colorClass = "font-semibold text-blue-500 text-base";
+          } else if (val === 7) {
+            emoji = "😊";
+            text = "Very Good";
+            colorClass = "font-semibold text-blue-600 text-base";
+          } else if (val === 8) {
+            emoji = "😄";
+            text = "Excellent";
+            colorClass = "font-semibold text-green-600 text-base";
+          } else if (val === 9) {
+            emoji = "🤩";
+            text = "Outstanding";
+            colorClass = "font-semibold text-emerald-600 text-base";
+          } else if (val === 10) {
+            emoji = "✨";
+            text = "Optimal";
+            colorClass = "font-semibold text-green-700 text-base";
           } else {
-            display.className = "font-bold text-green-600 text-base";
+            emoji = "❓";
+            text = "Please select";
+            colorClass = "font-semibold text-gray-500 text-base";
           }
+
+          display.innerHTML = `${emoji} ${text}`;
+          display.className = colorClass;
+        } else if (display) {
+          display.innerHTML = "";
         }
       }
 
@@ -1647,6 +1705,122 @@
         }
       });
 
+      // Mental Health Tooltip Functions
+      let mentalHealthTooltipTimeout = null;
+
+      function showMentalHealthTooltip() {
+        const tooltip = document.getElementById("mentalHealthTooltip");
+        if (tooltip) {
+          // Clear any existing timeout
+          if (mentalHealthTooltipTimeout) {
+            clearTimeout(mentalHealthTooltipTimeout);
+            mentalHealthTooltipTimeout = null;
+          }
+
+          tooltip.classList.remove("hidden");
+
+          // Position tooltip intelligently based on viewport
+          const input = document.querySelector('input[name="mental_health_score"]');
+          if (input) {
+            const rect = input.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const tooltipHeight = 450; // Estimated tooltip height
+            const spaceAbove = rect.top;
+            const spaceBelow = viewportHeight - rect.bottom;
+
+            // Show above if there's space, otherwise below
+            if (spaceAbove >= tooltipHeight + 10) {
+              tooltip.style.bottom = '100%';
+              tooltip.style.top = 'auto';
+              tooltip.style.marginBottom = '8px';
+              tooltip.style.marginTop = '0';
+            } else {
+              tooltip.style.top = '100%';
+              tooltip.style.bottom = 'auto';
+              tooltip.style.marginTop = '8px';
+              tooltip.style.marginBottom = '0';
+            }
+
+            // Adjust left position to not go off screen
+            const tooltipWidth = tooltip.offsetWidth || 320;
+            const spaceLeft = rect.left;
+            const spaceRight = window.innerWidth - rect.right;
+
+            if (spaceLeft + tooltipWidth > window.innerWidth) {
+              // Shift left if it would go off screen
+              tooltip.style.left = 'auto';
+              tooltip.style.right = '0';
+            } else {
+              tooltip.style.left = '0';
+              tooltip.style.right = 'auto';
+            }
+          }
+        }
+      }
+
+      function hideMentalHealthTooltip() {
+        const tooltip = document.getElementById("mentalHealthTooltip");
+        if (tooltip && !tooltip.matches(':hover')) {
+          mentalHealthTooltipTimeout = setTimeout(() => {
+            tooltip.classList.add("hidden");
+            mentalHealthTooltipTimeout = null;
+          }, 300); // Increased delay for better UX
+        }
+      }
+
+      function toggleMentalHealthTooltip() {
+        const tooltip = document.getElementById("mentalHealthTooltip");
+        if (tooltip) {
+          if (tooltip.classList.contains("hidden")) {
+            showMentalHealthTooltip();
+          } else {
+            hideMentalHealthTooltip();
+          }
+        }
+      }
+
+      // Enhanced tooltip event listeners
+      document.addEventListener('DOMContentLoaded', function() {
+        const tooltip = document.getElementById("mentalHealthTooltip");
+        const input = document.querySelector('input[name="mental_health_score"]');
+        const infoButton = document.querySelector('[onclick="toggleMentalHealthTooltip()"]');
+
+        if (tooltip && input && infoButton) {
+          // Show tooltip on input focus
+          input.addEventListener('focus', showMentalHealthTooltip);
+
+          // Hide tooltip on input blur (with delay)
+          input.addEventListener('blur', hideMentalHealthTooltip);
+
+          // Show/hide on info button click
+          infoButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleMentalHealthTooltip();
+          });
+
+          // Keep tooltip open when hovering over it
+          tooltip.addEventListener('mouseenter', function() {
+            if (mentalHealthTooltipTimeout) {
+              clearTimeout(mentalHealthTooltipTimeout);
+              mentalHealthTooltipTimeout = null;
+            }
+          });
+
+          tooltip.addEventListener('mouseleave', hideMentalHealthTooltip);
+
+          // Close on escape key
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !tooltip.classList.contains("hidden")) {
+              tooltip.classList.add("hidden");
+              if (mentalHealthTooltipTimeout) {
+                clearTimeout(mentalHealthTooltipTimeout);
+                mentalHealthTooltipTimeout = null;
+              }
+            }
+          });
+        }
+      });
+
       // Make functions globally available
       window.displayEnhancedResults = displayEnhancedResults;
       window.shareResults = shareResults;
@@ -1654,6 +1828,9 @@
       window.updateUsageValue = updateUsageValue;
       window.updateSleepDisplay = updateSleepDisplay;
       window.updateMentalHealthDisplay = updateMentalHealthDisplay;
+      window.showMentalHealthTooltip = showMentalHealthTooltip;
+      window.hideMentalHealthTooltip = hideMentalHealthTooltip;
+      window.toggleMentalHealthTooltip = toggleMentalHealthTooltip;
     </script>
 
     <style>
@@ -1671,6 +1848,60 @@
 
       .animate-gradient {
         animation: gradient 3s ease infinite;
+      }
+
+      /* Mental Health Tooltip Styles */
+      #mentalHealthTooltip {
+        max-height: 400px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #e5e7eb #f9fafb;
+      }
+
+      #mentalHealthTooltip::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #mentalHealthTooltip::-webkit-scrollbar-track {
+        background: #f9fafb;
+        border-radius: 3px;
+      }
+
+      #mentalHealthTooltip::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 3px;
+      }
+
+      #mentalHealthTooltip::-webkit-scrollbar-thumb:hover {
+        background: #d1d5db;
+      }
+
+      /* Tooltip fade in animation */
+      #mentalHealthTooltip:not(.hidden) {
+        animation: tooltipFadeIn 0.2s ease-out;
+      }
+
+      @keyframes tooltipFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Score circles hover effect */
+      #mentalHealthTooltip .w-8:hover {
+        transform: scale(1.1);
+        transition: transform 0.2s ease;
+      }
+
+      /* Make tooltip stay open when hovering */
+      #mentalHealthTooltip:hover {
+        visibility: visible;
+        opacity: 1;
       }
     </style>
   </body>
